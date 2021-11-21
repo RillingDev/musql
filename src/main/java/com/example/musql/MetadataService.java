@@ -1,10 +1,12 @@
 package com.example.musql;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.TikaCoreProperties;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -19,20 +21,29 @@ import java.nio.file.Path;
 @Service
 public class MetadataService {
 
-
-	public FileMetadata getMetadata(Path file) throws IOException, SAXException, TikaException {
+	public @NotNull FileMetadata getMetadata(@NotNull Path file) throws IOException, SAXException, TikaException {
 		org.apache.tika.metadata.Metadata metadata = parse(file);
 		metadata.remove(TikaCoreProperties.TIKA_PARSED_BY.getName());
-		return new FileMetadata(file, metadata);
+
+		byte[] sha256Hash = calcSha256Hash(file);
+
+		return new FileMetadata(file, metadata, sha256Hash);
 	}
 
-	private org.apache.tika.metadata.Metadata parse(Path file) throws IOException, SAXException, TikaException {
+	private byte[] calcSha256Hash(@NotNull Path file) throws IOException {
+		try (InputStream inputStream = Files.newInputStream(file)) {
+			return DigestUtils.sha256(inputStream);
+		}
+	}
+
+	private @NotNull org.apache.tika.metadata.Metadata parse(@NotNull Path file)
+		throws IOException, SAXException, TikaException {
 		org.apache.tika.metadata.Metadata metadata = new org.apache.tika.metadata.Metadata();
 		Parser parser = new AutoDetectParser();
 		ContentHandler handler = new DefaultHandler();
 		ParseContext context = new ParseContext();
 		try (InputStream fsStream = Files.newInputStream(file); InputStream inputStream = new BufferedInputStream(
-				fsStream)) {
+			fsStream)) {
 			parser.parse(inputStream, handler, metadata, context);
 		}
 		return metadata;

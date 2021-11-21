@@ -1,0 +1,7 @@
+CREATE TABLE musql.files
+(
+	id          BIGINT  NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	path        VARCHAR NOT NULL UNIQUE,
+	sha256_hash BYTEA   NOT NULL,
+	tags        JSON    NOT NULL
+)
