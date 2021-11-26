@@ -17,17 +17,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class MetadataService {
 
-	public @NotNull FileMetadata getMetadata(@NotNull Path file) throws IOException, SAXException, TikaException {
-		org.apache.tika.metadata.Metadata metadata = parse(file);
-		metadata.remove(TikaCoreProperties.TIKA_PARSED_BY.getName());
-
+	public @NotNull FileEntity getMetadata(@NotNull Path file) throws IOException, SAXException, TikaException {
+		Map<String, String> metadata = parse(file);
 		byte[] sha256Hash = calcSha256Hash(file);
 
-		return new FileMetadata(file, metadata, sha256Hash);
+		return new FileEntity(null, file.normalize(), sha256Hash, metadata);
 	}
 
 	private byte[] calcSha256Hash(@NotNull Path file) throws IOException {
@@ -36,8 +37,7 @@ public class MetadataService {
 		}
 	}
 
-	private @NotNull org.apache.tika.metadata.Metadata parse(@NotNull Path file)
-		throws IOException, SAXException, TikaException {
+	private @NotNull Map<String, String> parse(@NotNull Path file) throws IOException, SAXException, TikaException {
 		org.apache.tika.metadata.Metadata metadata = new org.apache.tika.metadata.Metadata();
 		Parser parser = new AutoDetectParser();
 		ContentHandler handler = new DefaultHandler();
@@ -46,7 +46,14 @@ public class MetadataService {
 			fsStream)) {
 			parser.parse(inputStream, handler, metadata, context);
 		}
-		return metadata;
+
+		Map<String, String> map = new HashMap<>(metadata.size());
+		for (String name : metadata.names()) {
+			if (!name.equals(TikaCoreProperties.TIKA_PARSED_BY.getName())) {
+				map.put(name, metadata.get(name));
+			}
+		}
+		return Collections.unmodifiableMap(map);
 	}
 
 }
