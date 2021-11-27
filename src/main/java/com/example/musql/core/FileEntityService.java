@@ -1,12 +1,10 @@
 package com.example.musql.core;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.tika.exception.TikaException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,7 +27,7 @@ public class FileEntityService {
 		this.metadataService = metadataService;
 	}
 
-	public @NotNull FileEntity loadFile(@NotNull Path file) throws IOException, SAXException, TikaException {
+	public @NotNull FileEntity loadFile(@NotNull Path file) throws IOException {
 		Map<String, String> metadata = metadataService.parse(file);
 		byte[] sha256Hash = calcSha256Hash(file);
 

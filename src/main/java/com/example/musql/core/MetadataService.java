@@ -23,7 +23,7 @@ import java.util.Map;
 @Service
 public class MetadataService {
 
-	public @NotNull Map<String, String> parse(@NotNull Path file) throws IOException, SAXException, TikaException {
+	public @NotNull Map<String, String> parse(@NotNull Path file) throws IOException {
 		org.apache.tika.metadata.Metadata metadata = new org.apache.tika.metadata.Metadata();
 		Parser parser = new AutoDetectParser();
 		ContentHandler handler = new DefaultHandler();
@@ -31,6 +31,8 @@ public class MetadataService {
 		try (InputStream fsStream = Files.newInputStream(file); InputStream inputStream = new BufferedInputStream(
 			fsStream)) {
 			parser.parse(inputStream, handler, metadata, context);
+		} catch (TikaException | SAXException e) {
+			throw new IOException("Could not parse file.", e);
 		}
 
 		Map<String, String> map = new HashMap<>(metadata.size());
