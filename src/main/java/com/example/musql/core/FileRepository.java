@@ -1,4 +1,4 @@
-package com.example.musql;
+package com.example.musql.core;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Repository;
@@ -10,12 +10,12 @@ import java.util.Map;
 import java.util.Optional;
 
 @Repository
-public class FileRepository {
+class FileRepository {
 
 	private final DataSource dataSource;
 	private final FileTagRepository fileTagRepository;
 
-	public FileRepository(DataSource dataSource, FileTagRepository fileTagRepository) {
+	FileRepository(DataSource dataSource, FileTagRepository fileTagRepository) {
 		this.dataSource = dataSource;
 		this.fileTagRepository = fileTagRepository;
 	}

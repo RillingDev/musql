@@ -1,6 +1,5 @@
-package com.example.musql;
+package com.example.musql.core;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.TikaCoreProperties;
 import org.apache.tika.parser.AutoDetectParser;
@@ -24,20 +23,7 @@ import java.util.Map;
 @Service
 public class MetadataService {
 
-	public @NotNull FileEntity getMetadata(@NotNull Path file) throws IOException, SAXException, TikaException {
-		Map<String, String> metadata = parse(file);
-		byte[] sha256Hash = calcSha256Hash(file);
-
-		return new FileEntity(null, file.normalize(), sha256Hash, metadata);
-	}
-
-	private byte[] calcSha256Hash(@NotNull Path file) throws IOException {
-		try (InputStream inputStream = Files.newInputStream(file)) {
-			return DigestUtils.sha256(inputStream);
-		}
-	}
-
-	private @NotNull Map<String, String> parse(@NotNull Path file) throws IOException, SAXException, TikaException {
+	public @NotNull Map<String, String> parse(@NotNull Path file) throws IOException, SAXException, TikaException {
 		org.apache.tika.metadata.Metadata metadata = new org.apache.tika.metadata.Metadata();
 		Parser parser = new AutoDetectParser();
 		ContentHandler handler = new DefaultHandler();

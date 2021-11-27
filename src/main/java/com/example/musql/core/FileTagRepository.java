@@ -1,4 +1,4 @@
-package com.example.musql;
+package com.example.musql.core;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Repository;
@@ -13,11 +13,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Repository
-public class FileTagRepository {
+class FileTagRepository {
 
 	private final DataSource dataSource;
 
-	public FileTagRepository(DataSource dataSource) {
+	FileTagRepository(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
 

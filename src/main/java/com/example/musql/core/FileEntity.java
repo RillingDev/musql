@@ -1,4 +1,4 @@
-package com.example.musql;
+package com.example.musql.core;
 
 import org.jetbrains.annotations.NotNull;
 
