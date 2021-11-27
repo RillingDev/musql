@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
@@ -28,6 +29,13 @@ public class FileEntityService {
 	}
 
 	public @NotNull FileEntity loadFile(@NotNull Path file) throws IOException {
+		if (!Files.exists(file)) {
+			throw new IllegalArgumentException(MessageFormat.format("Path ''{0}'' does not exist.", file));
+		}
+		if (!Files.isRegularFile(file)) {
+			throw new IllegalArgumentException(MessageFormat.format("Path ''{0}'' is not a regular file.", file));
+		}
+
 		Map<String, String> metadata = metadataService.parse(file);
 		byte[] sha256Hash = calcSha256Hash(file);
 
@@ -50,7 +58,8 @@ public class FileEntityService {
 				return;
 			}
 
-			LOGGER.info("For path '{}' an entry was found, but with a different hash, replacing it.", fileEntity.path());
+			LOGGER.info("For path '{}' an entry was found, but with a different hash, replacing it.",
+				fileEntity.path());
 			fileRepository.delete(existingEntity);
 		} else {
 			LOGGER.info("For path '{}' no entry was found, creating it.", fileEntity.path());

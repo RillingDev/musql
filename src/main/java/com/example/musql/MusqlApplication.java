@@ -8,6 +8,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @SpringBootApplication
 public class MusqlApplication implements CommandLineRunner {
@@ -24,14 +27,10 @@ public class MusqlApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		Path a = Paths.get("./local/03 Things Happen.flac");
-		System.out.println(a.toAbsolutePath());
-		FileEntity aM = fileEntityService.loadFile(a);
-		fileEntityService.save(aM);
-
-		Path b = Paths.get("./local/11 Blueberry.mp3");
-		System.out.println(b.toAbsolutePath());
-		FileEntity bM = fileEntityService.loadFile(b);
-		fileEntityService.save(bM);
+		Set<Path> paths = Arrays.stream(args).map(Paths::get).collect(Collectors.toSet());
+		for (Path path : paths) {
+			FileEntity fileEntity = fileEntityService.loadFile(path);
+			fileEntityService.save(fileEntity);
+		}
 	}
 }
