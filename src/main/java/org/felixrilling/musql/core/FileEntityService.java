@@ -1,5 +1,6 @@
 package org.felixrilling.musql.core;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -12,7 +13,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -36,7 +36,7 @@ public class FileEntityService {
 			throw new IllegalArgumentException(MessageFormat.format("Path ''{0}'' is not a regular file.", file));
 		}
 
-		Map<String, String> metadata = metadataService.parse(file);
+		@NotNull ObjectNode metadata = metadataService.parse(file);
 		byte[] sha256Hash = calcSha256Hash(file);
 
 		return new FileEntity(null, file.normalize(), sha256Hash, metadata);

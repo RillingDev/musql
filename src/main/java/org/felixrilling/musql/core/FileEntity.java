@@ -1,12 +1,12 @@
 package org.felixrilling.musql.core;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
-import java.util.Map;
 import java.util.Objects;
 
-public record FileEntity(Long id, @NotNull Path path, byte[] sha256Hash, @NotNull Map<String, String> tags) {
+public record FileEntity(Long id, @NotNull Path path, byte[] sha256Hash, @NotNull ObjectNode tags) {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {

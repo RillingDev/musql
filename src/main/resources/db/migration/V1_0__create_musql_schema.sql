@@ -2,15 +2,6 @@ CREATE TABLE musql.file
 (
 	id          BIGINT  NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 	path        VARCHAR NOT NULL UNIQUE,
-	sha256_hash BYTEA   NOT NULL
+	sha256_hash BYTEA   NOT NULL,
+	tags        JSONB   NOT NULL
 );
-
-CREATE TABLE musql.file_tag
-(
-	id      BIGINT  NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	file_id BIGINT  NOT NULL,
-	key     VARCHAR NOT NULL,
-	value   TEXT    NOT NULL,
-	CONSTRAINT fk_file_tag_file FOREIGN KEY (file_id) REFERENCES musql.file (id) ON DELETE CASCADE,
-	CONSTRAINT uq_file_tag_key_file UNIQUE (file_id, key)
-)
