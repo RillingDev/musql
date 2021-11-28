@@ -1,4 +1,4 @@
-package com.example.musql;
+package org.felixrilling.musql;
 
 import org.junit.jupiter.api.Test;
 

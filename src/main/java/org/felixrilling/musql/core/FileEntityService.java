@@ -1,4 +1,4 @@
-package com.example.musql.core;
+package org.felixrilling.musql.core;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.jetbrains.annotations.NotNull;

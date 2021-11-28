@@ -1,4 +1,4 @@
-package com.example.musql.core;
+package org.felixrilling.musql.core;
 
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.TikaCoreProperties;

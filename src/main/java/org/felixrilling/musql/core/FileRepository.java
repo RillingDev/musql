@@ -1,4 +1,4 @@
-package com.example.musql.core;
+package org.felixrilling.musql.core;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Repository;

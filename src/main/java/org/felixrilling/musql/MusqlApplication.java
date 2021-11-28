@@ -1,7 +1,7 @@
-package com.example.musql;
+package org.felixrilling.musql;
 
-import com.example.musql.core.FileEntity;
-import com.example.musql.core.FileEntityService;
+import org.felixrilling.musql.core.FileEntity;
+import org.felixrilling.musql.core.FileEntityService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
