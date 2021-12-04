@@ -10,23 +10,25 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.Map;
+
 @SpringBootTest
-@ContextConfiguration(initializers = {BaseIT.PostgreDataSourceInitializer.class})
+@ContextConfiguration(initializers = {BaseIT.PostgresDataSourceInitializer.class})
 @Testcontainers
 abstract class BaseIT {
 
 	@Container
-	static final PostgreSQLContainer<?> POSTGRE_SQL_CONTAINER = new PostgreSQLContainer<>("postgres:14").withDatabaseName(
+	static final PostgreSQLContainer<?> POSTGRES_CONTAINER = new PostgreSQLContainer<>("postgres:14").withDatabaseName(
 		"integration-tests-db").withUsername("sa").withPassword("sa");
 
 
-	static class PostgreDataSourceInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+	static class PostgresDataSourceInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
 		@Override
 		public void initialize(@NotNull ConfigurableApplicationContext applicationContext) {
-			TestPropertyValues.of("spring.datasource.url=" + POSTGRE_SQL_CONTAINER.getJdbcUrl(),
-					"spring.datasource.username=" + POSTGRE_SQL_CONTAINER.getUsername(),
-					"spring.datasource.password=" + POSTGRE_SQL_CONTAINER.getPassword())
+			TestPropertyValues.of(Map.ofEntries(Map.entry("spring.datasource.url", POSTGRES_CONTAINER.getJdbcUrl()),
+					Map.entry("spring.datasource.username", POSTGRES_CONTAINER.getUsername()),
+					Map.entry("spring.datasource.password", POSTGRES_CONTAINER.getPassword())))
 				.applyTo(applicationContext.getEnvironment());
 		}
 	}
