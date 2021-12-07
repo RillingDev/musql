@@ -25,7 +25,7 @@ import java.util.Set;
 @Service
 public class MetadataService {
 
-	private static final Set<String> IGNORED_NAMES = Set.of(TikaCoreProperties.TIKA_PARSED_BY.getName());
+	private static final Set<String> IGNORED_PROPERTY_NAMES = Set.of(TikaCoreProperties.TIKA_PARSED_BY.getName());
 
 	public @NotNull ObjectNode parse(@NotNull Path file) throws IOException {
 		org.apache.tika.metadata.Metadata metadata = new org.apache.tika.metadata.Metadata();
@@ -38,30 +38,26 @@ public class MetadataService {
 		} catch (TikaException | SAXException e) {
 			throw new IOException("Could not parse file.", e);
 		}
-
-		for (String ignoredName : IGNORED_NAMES) {
-			metadata.remove(ignoredName);
-		}
-
-		return metaDataAsJson(metadata);
+		return convertMetadataToJson(metadata);
 	}
 
-	private @NotNull ObjectNode metaDataAsJson(@NotNull Metadata metadata) {
+	private @NotNull ObjectNode convertMetadataToJson(@NotNull Metadata metadata) {
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectNode node = mapper.createObjectNode();
 		for (String name : metadata.names()) {
+			if (IGNORED_PROPERTY_NAMES.contains(name)) {
+				continue;
+			}
+
 			if (metadata.isMultiValued(name)) {
 				ArrayNode array = node.putArray(name);
-				String[] values = metadata.getValues(name);
-				for (String arrayItem : values) {
+				for (String arrayItem : metadata.getValues(name)) {
 					array.add(arrayItem);
 				}
 			} else {
-				String value = metadata.get(name);
-				node.put(name, value);
+				node.put(name, metadata.get(name));
 			}
 		}
-
 		return node;
 	}
 
