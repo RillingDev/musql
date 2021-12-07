@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -30,10 +29,10 @@ public class FileEntityService {
 
 	public @NotNull FileEntity loadFile(@NotNull Path file) throws IOException {
 		if (!Files.exists(file)) {
-			throw new IllegalArgumentException(MessageFormat.format("Path ''{0}'' does not exist.", file));
+			throw new IllegalArgumentException("Path '%s' does not exist.".formatted(file));
 		}
 		if (!Files.isRegularFile(file)) {
-			throw new IllegalArgumentException(MessageFormat.format("Path ''{0}'' is not a regular file.", file));
+			throw new IllegalArgumentException("Path '%s' is not a regular file.".formatted(file));
 		}
 
 		@NotNull ObjectNode metadata = metadataService.parse(file);
