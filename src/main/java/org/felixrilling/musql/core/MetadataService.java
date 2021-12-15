@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
-import org.apache.tika.metadata.TikaCoreProperties;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
@@ -20,12 +19,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Set;
+import java.util.Optional;
 
 @Service
 public class MetadataService {
+	private final MappingService mappingService;
 
-	private static final Set<String> IGNORED_PROPERTY_NAMES = Set.of(TikaCoreProperties.TIKA_PARSED_BY.getName());
+	public MetadataService(MappingService mappingService) {
+		this.mappingService = mappingService;
+	}
 
 	public @NotNull ObjectNode parse(@NotNull Path file) throws IOException {
 		org.apache.tika.metadata.Metadata metadata = new org.apache.tika.metadata.Metadata();
@@ -45,17 +47,20 @@ public class MetadataService {
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectNode node = mapper.createObjectNode();
 		for (String name : metadata.names()) {
-			if (IGNORED_PROPERTY_NAMES.contains(name)) {
+			Optional<String> keyOpt = mappingService.mapKey(name);
+			if(keyOpt.isEmpty()){
 				continue;
 			}
+			String key = keyOpt.get();
 
 			if (metadata.isMultiValued(name)) {
-				ArrayNode array = node.putArray(name);
-				for (String arrayItem : metadata.getValues(name)) {
-					array.add(arrayItem);
+				ArrayNode array = node.putArray(key);
+				for (String value : metadata.getValues(name)) {
+					array.add(value);
 				}
 			} else {
-				node.put(name, metadata.get(name));
+				String value = metadata.get(name);
+				node.put(key, value);
 			}
 		}
 		return node;
