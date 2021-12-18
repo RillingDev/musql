@@ -1,8 +1,5 @@
 package org.felixrilling.musql.core;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
@@ -19,7 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class MetadataService {
@@ -29,8 +26,8 @@ public class MetadataService {
 		this.mappingService = mappingService;
 	}
 
-	public @NotNull ObjectNode parse(@NotNull Path file) throws IOException {
-		org.apache.tika.metadata.Metadata metadata = new org.apache.tika.metadata.Metadata();
+	public @NotNull Map<String, Set<String>> parse(@NotNull Path file) throws IOException {
+		Metadata metadata = new Metadata();
 		Parser parser = new AutoDetectParser();
 		ContentHandler handler = new DefaultHandler();
 		ParseContext context = new ParseContext();
@@ -40,30 +37,27 @@ public class MetadataService {
 		} catch (TikaException | SAXException e) {
 			throw new IOException("Could not parse file.", e);
 		}
-		return convertMetadataToJson(metadata);
+		return convertMetadata(metadata);
 	}
 
-	private @NotNull ObjectNode convertMetadataToJson(@NotNull Metadata metadata) {
-		ObjectMapper mapper = new ObjectMapper();
-		ObjectNode node = mapper.createObjectNode();
+	private @NotNull Map<String, Set<String>> convertMetadata(@NotNull Metadata metadata) {
+		Map<String, Set<String>> hashMap = new HashMap<>(metadata.size());
 		for (String name : metadata.names()) {
 			Optional<String> keyOpt = mappingService.mapKey(name);
-			if(keyOpt.isEmpty()){
+			if (keyOpt.isEmpty()) {
 				continue;
 			}
 			String key = keyOpt.get();
 
 			if (metadata.isMultiValued(name)) {
-				ArrayNode array = node.putArray(key);
-				for (String value : metadata.getValues(name)) {
-					array.add(value);
-				}
+				String[] values = metadata.getValues(name);
+				hashMap.put(key, Set.copyOf(Arrays.asList(values)));
 			} else {
 				String value = metadata.get(name);
-				node.put(key, value);
+				hashMap.put(key, Set.of(value));
 			}
 		}
-		return node;
+		return Collections.unmodifiableMap(hashMap);
 	}
 
 }

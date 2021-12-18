@@ -1,45 +1,41 @@
 package org.felixrilling.musql.core;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.io.IOException;
 import java.nio.file.Path;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 class FileRepository {
 
 	private final DataSource dataSource;
+	private final FileTagRepository fileTagRepository;
 
-	FileRepository(DataSource dataSource) {
+	FileRepository(DataSource dataSource, FileTagRepository fileTagRepository) {
 		this.dataSource = dataSource;
+		this.fileTagRepository = fileTagRepository;
 	}
 
 	public @NotNull Optional<FileEntity> loadByPath(@NotNull Path path) {
 		try (Connection con = dataSource.getConnection(); PreparedStatement ps = con.prepareStatement(
-			"SELECT id, sha256_hash, tags FROM musql.file f WHERE f.path = ?")) {
+			"SELECT id, sha256_hash FROM musql.file f WHERE f.path = ?")) {
 			ps.setString(1, serializePath(path));
 			ps.execute();
 			try (ResultSet rs = ps.getResultSet()) {
 				if (rs.next()) {
 					long id = rs.getLong(1);
 					byte[] sha256Hash = rs.getBytes(2);
-					String tagsJson = rs.getString(3);
-					ObjectNode tags = deserializeJson(tagsJson);
+					Map<String, Set<String>> tags = fileTagRepository.loadByFileId(id);
 					return Optional.of(new FileEntity(id, path, sha256Hash, tags));
 				}
 				return Optional.empty();
 			}
-		} catch (SQLException | IOException e) {
+		} catch (SQLException e) {
 			throw new PersistenceException(e);
 		}
 	}
@@ -56,11 +52,24 @@ class FileRepository {
 
 	public void insert(@NotNull FileEntity fileEntity) {
 		try (Connection con = dataSource.getConnection(); PreparedStatement ps = con.prepareStatement(
-			"INSERT INTO musql.file (path, sha256_hash, tags) VALUES (?, ?, ?::JSONB)")) {
-			ps.setString(1, serializePath(fileEntity.path()));
+			"INSERT INTO musql.file (path, sha256_hash) VALUES (?, ?)",
+			Statement.RETURN_GENERATED_KEYS)) {
+			ps.setString(1, fileEntity.path().toString());
 			ps.setBytes(2, fileEntity.sha256Hash());
-			ps.setString(3, serializeJson(fileEntity.tags()));
 			ps.executeUpdate();
+
+			long id;
+			try (ResultSet keys = ps.getGeneratedKeys()) {
+				keys.next();
+				id = keys.getLong(1);
+			}
+
+			for (Map.Entry<String, Set<String>> entry : fileEntity.tags().entrySet()) {
+				String key = entry.getKey();
+				for (String value : entry.getValue()) {
+					fileTagRepository.insert(id, key, value);
+				}
+			}
 		} catch (SQLException e) {
 			throw new PersistenceException(e);
 		}
@@ -68,14 +77,6 @@ class FileRepository {
 
 	private @NotNull String serializePath(@NotNull Path path) {
 		return path.toString();
-	}
-
-	private @NotNull String serializeJson(@NotNull ObjectNode tags) {
-		return tags.toString();
-	}
-
-	private @NotNull ObjectNode deserializeJson(@NotNull String tagsJson) throws JsonProcessingException {
-		return new ObjectMapper().readValue(tagsJson, ObjectNode.class);
 	}
 
 }
