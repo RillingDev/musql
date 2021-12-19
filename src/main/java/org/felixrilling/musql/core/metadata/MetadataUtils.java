@@ -1,4 +1,4 @@
-package org.felixrilling.musql.core;
+package org.felixrilling.musql.core.metadata;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-final class MetadataUtils {
+public final class MetadataUtils {
 
 	private MetadataUtils() {
 	}

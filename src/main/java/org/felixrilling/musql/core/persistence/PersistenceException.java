@@ -1,4 +1,4 @@
-package org.felixrilling.musql.core;
+package org.felixrilling.musql.core.persistence;
 
 import java.io.Serial;
 

@@ -1,4 +1,4 @@
-package org.felixrilling.musql.core;
+package org.felixrilling.musql.core.metadata;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 @Service
-public class MappingService {
+class MappingService {
 
 	private Map<String, String> keyMapping;
 

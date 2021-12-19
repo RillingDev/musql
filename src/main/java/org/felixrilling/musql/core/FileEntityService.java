@@ -1,6 +1,8 @@
 package org.felixrilling.musql.core;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.felixrilling.musql.core.metadata.MetadataService;
+import org.felixrilling.musql.core.persistence.FileRepository;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +25,7 @@ public class FileEntityService {
 	private final FileRepository fileRepository;
 	private final MetadataService metadataService;
 
-	public FileEntityService(FileRepository fileRepository, MetadataService metadataService) {
+	FileEntityService(FileRepository fileRepository, MetadataService metadataService) {
 		this.fileRepository = fileRepository;
 		this.metadataService = metadataService;
 	}

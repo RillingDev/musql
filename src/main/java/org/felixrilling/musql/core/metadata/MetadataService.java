@@ -1,4 +1,4 @@
-package org.felixrilling.musql.core;
+package org.felixrilling.musql.core.metadata;
 
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
@@ -22,7 +22,7 @@ import java.util.*;
 public class MetadataService {
 	private final MappingService mappingService;
 
-	public MetadataService(MappingService mappingService) {
+	MetadataService(MappingService mappingService) {
 		this.mappingService = mappingService;
 	}
 

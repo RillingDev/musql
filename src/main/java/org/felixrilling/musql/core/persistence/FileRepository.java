@@ -1,5 +1,7 @@
-package org.felixrilling.musql.core;
+package org.felixrilling.musql.core.persistence;
 
+import org.felixrilling.musql.core.FileEntity;
+import org.felixrilling.musql.core.metadata.MetadataUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Repository;
 
@@ -9,7 +11,7 @@ import java.sql.*;
 import java.util.*;
 
 @Repository
-class FileRepository {
+public class FileRepository {
 
 	private final DataSource dataSource;
 
