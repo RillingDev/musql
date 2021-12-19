@@ -44,7 +44,7 @@ public class MusqlApplication implements CommandLineRunner {
 				FileEntity fileEntity = fileEntityService.loadFile(file);
 				LOGGER.info("Read file '{}'.", file);
 				fileEntityService.save(fileEntity);
-				LOGGER.info("Imported file '{}'.", file);
+				LOGGER.info("Completed file '{}'.", file);
 			} catch (Exception e) {
 				LOGGER.error("Could not read/import '{}'.", file, e);
 			}
