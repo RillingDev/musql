@@ -41,13 +41,23 @@ class FileTagRepository {
 		}
 	}
 
-	public void insert(long fileId, @NotNull String key, @NotNull String value) {
-		try (Connection con = dataSource.getConnection(); PreparedStatement ps = con.prepareStatement(
-			"INSERT INTO musql.file_tag (file_id, key, value) VALUES (?, ?, ?)")) {
-			ps.setLong(1, fileId);
-			ps.setString(2, key);
-			ps.setString(3, value);
-			ps.executeUpdate();
+	public void insert(long fileId, @NotNull Map<String, Set<String>> tags) {
+		try (Connection con = dataSource.getConnection()) {
+			con.setAutoCommit(false);
+			try (PreparedStatement ps = con.prepareStatement(
+				"INSERT INTO musql.file_tag (file_id, key, value) VALUES (?, ?, ?)")) {
+				for (Map.Entry<String, Set<String>> entry : tags.entrySet()) {
+					String key = entry.getKey();
+					for (String value : entry.getValue()) {
+						ps.setLong(1, fileId);
+						ps.setString(2, key);
+						ps.setString(3, value);
+						ps.addBatch();
+					}
+				}
+				ps.executeBatch();
+			}
+			con.commit();
 		} catch (SQLException e) {
 			throw new PersistenceException(e);
 		}

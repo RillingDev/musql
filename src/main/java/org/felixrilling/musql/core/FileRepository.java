@@ -63,13 +63,8 @@ class FileRepository {
 				keys.next();
 				id = keys.getLong(1);
 			}
+			fileTagRepository.insert(id, fileEntity.metadata());
 
-			for (Map.Entry<String, Set<String>> entry : fileEntity.metadata().entrySet()) {
-				String key = entry.getKey();
-				for (String value : entry.getValue()) {
-					fileTagRepository.insert(id, key, value);
-				}
-			}
 		} catch (SQLException e) {
 			throw new PersistenceException(e);
 		}
