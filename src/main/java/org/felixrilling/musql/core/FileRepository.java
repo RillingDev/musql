@@ -17,6 +17,12 @@ class FileRepository {
 		this.dataSource = dataSource;
 	}
 
+	/**
+	 * Loads an existing entity by its file path.
+	 *
+	 * @param path Path to load by.
+	 * @return existing entity or empty if none exists for this path.
+	 */
 	public @NotNull Optional<FileEntity> loadByPath(@NotNull Path path) {
 		try (Connection con = dataSource.getConnection(); PreparedStatement ps = con.prepareStatement(
 			"SELECT id, sha256_hash FROM musql.file f WHERE f.path = ?")) {
@@ -36,11 +42,21 @@ class FileRepository {
 		}
 	}
 
+	/**
+	 * Inserts a new entity.
+	 *
+	 * @param fileEntity Entity to persist.
+	 */
 	public void insert(@NotNull FileEntity fileEntity) {
 		try (Connection con = dataSource.getConnection()) {
 			con.setAutoCommit(false);
-			doInsert(con, fileEntity);
-			con.commit();
+			try {
+				doInsert(con, fileEntity);
+				con.commit();
+			} catch (SQLException e) {
+				con.rollback();
+				throw new PersistenceException(e);
+			}
 		} catch (SQLException e) {
 			throw new PersistenceException(e);
 		}
@@ -62,6 +78,11 @@ class FileRepository {
 		}
 	}
 
+	/**
+	 * Deletes an already persisted entity.
+	 *
+	 * @param fileEntity Entity to delete.
+	 */
 	public void delete(@NotNull FileEntity fileEntity) {
 		try (Connection con = dataSource.getConnection(); PreparedStatement ps = con.prepareStatement(
 			"DELETE FROM musql.file f WHERE f.path = ?")) {
