@@ -2,7 +2,6 @@ package org.felixrilling.musql.core;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.felixrilling.musql.core.metadata.MetadataService;
-import org.felixrilling.musql.core.persistence.FileRepository;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
