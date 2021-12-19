@@ -8,9 +8,10 @@ Reads metadata from music files and inserts them into a database for further pro
 
 ## Usage
 
-Before starting, set up a PostgreSQL 14 DB locally (Docker works well).
+Import files:
 
-Import music:
+`java -jar musql*.jar music-file1.flac music-file2.mp3`
 
-`java -Dspring.datasource.url=jdbc:postgresql://127.0.0.1:5432/<musql_db> -Dspring.datasource.username=<username>
--Dspring.datasource.password=<password> -jar musql*.jar music-file1.flac music-file2.mp3`
+This will import the data into an embedded [H2 database](https://h2database.com/html/main.html) stored in the `./local` 
+directory. Connection details can be
+found in `src/main/resources/application.properties`.
