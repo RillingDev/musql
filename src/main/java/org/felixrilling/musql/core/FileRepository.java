@@ -29,15 +29,20 @@ class FileRepository {
 			"SELECT id, sha256_hash FROM musql.file f WHERE f.path = ?")) {
 			ps.setString(1, serializePath(path));
 			ps.execute();
+
+			long id;
+			byte[] sha256Hash;
 			try (ResultSet rs = ps.getResultSet()) {
 				if (rs.next()) {
-					long id = rs.getLong(1);
-					byte[] sha256Hash = rs.getBytes(2);
-					Map<String, Set<String>> metadata = loadMetadataByFileId(con, id);
-					return Optional.of(new FileEntity(id, path, sha256Hash, metadata));
+					id = rs.getLong(1);
+					sha256Hash = rs.getBytes(2);
+				} else {
+					return Optional.empty();
 				}
-				return Optional.empty();
 			}
+
+			Map<String, Set<String>> metadata = loadMetadataByFileId(con, id);
+			return Optional.of(new FileEntity(id, path, sha256Hash, metadata));
 		} catch (SQLException e) {
 			throw new PersistenceException(e);
 		}
