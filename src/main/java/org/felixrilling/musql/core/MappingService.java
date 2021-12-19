@@ -34,7 +34,7 @@ public class MappingService {
 	 * @param originalKey The original key.
 	 * @return The key to use. If empty, key can be omitted.
 	 */
-	public Optional<String> mapKey(String originalKey) {
+	public @NotNull Optional<String> mapKey(@NotNull String originalKey) {
 		if (keyMapping.containsKey(originalKey)) {
 			String newKey = keyMapping.get(originalKey);
 			if (StringUtils.isBlank(newKey)) {

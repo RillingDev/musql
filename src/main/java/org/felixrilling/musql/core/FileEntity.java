@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-public record FileEntity(Long id, @NotNull Path path, byte[] sha256Hash, @NotNull Map<String, Set<String>> tags) {
+public record FileEntity(Long id, @NotNull Path path, byte[] sha256Hash, @NotNull Map<String, Set<String>> metadata) {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {

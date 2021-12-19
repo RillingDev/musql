@@ -3,6 +3,7 @@ package org.felixrilling.musql;
 import org.apache.commons.io.file.AccumulatorPathVisitor;
 import org.felixrilling.musql.core.FileEntity;
 import org.felixrilling.musql.core.FileEntityService;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -50,7 +51,7 @@ public class MusqlApplication implements CommandLineRunner {
 		}
 	}
 
-	private Stream<Path> findFiles(Path path) {
+	private @NotNull Stream<Path> findFiles(@NotNull Path path) {
 		if (Files.isRegularFile(path)) {
 			return Stream.of(path);
 		}

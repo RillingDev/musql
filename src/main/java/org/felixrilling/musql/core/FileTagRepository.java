@@ -8,7 +8,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @Repository
 class FileTagRepository {
@@ -19,7 +22,7 @@ class FileTagRepository {
 		this.dataSource = dataSource;
 	}
 
-	public Map<String, Set<String>> loadByFileId(long fileId) {
+	public @NotNull Map<String, Set<String>> loadByFileId(long fileId) {
 		try (Connection con = dataSource.getConnection(); PreparedStatement ps = con.prepareStatement(
 			"SELECT key, value FROM musql.file_tag f WHERE f.file_id = ?")) {
 			ps.setLong(1, fileId);
@@ -32,8 +35,7 @@ class FileTagRepository {
 					map.computeIfAbsent(key, (ignored) -> new HashSet<>(1)).add(value);
 				}
 			}
-			// TODO: seal nested set.
-			return Collections.unmodifiableMap(map);
+			return MetadataUtils.createUnmodifiableMetadata(map);
 		} catch (SQLException e) {
 			throw new PersistenceException(e);
 		}

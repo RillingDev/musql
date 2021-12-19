@@ -57,7 +57,7 @@ public class MetadataService {
 				hashMap.put(key, Set.of(value));
 			}
 		}
-		return Collections.unmodifiableMap(hashMap);
+		return MetadataUtils.createUnmodifiableMetadata(hashMap);
 	}
 
 }

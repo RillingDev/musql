@@ -30,8 +30,8 @@ class FileRepository {
 				if (rs.next()) {
 					long id = rs.getLong(1);
 					byte[] sha256Hash = rs.getBytes(2);
-					Map<String, Set<String>> tags = fileTagRepository.loadByFileId(id);
-					return Optional.of(new FileEntity(id, path, sha256Hash, tags));
+					Map<String, Set<String>> metadata = fileTagRepository.loadByFileId(id);
+					return Optional.of(new FileEntity(id, path, sha256Hash, metadata));
 				}
 				return Optional.empty();
 			}
@@ -64,7 +64,7 @@ class FileRepository {
 				id = keys.getLong(1);
 			}
 
-			for (Map.Entry<String, Set<String>> entry : fileEntity.tags().entrySet()) {
+			for (Map.Entry<String, Set<String>> entry : fileEntity.metadata().entrySet()) {
 				String key = entry.getKey();
 				for (String value : entry.getValue()) {
 					fileTagRepository.insert(id, key, value);
