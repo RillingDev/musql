@@ -1,4 +1,4 @@
-package org.felixrilling.musql.core.metadata;
+package dev.rilling.musql.core.metadata;
 
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;

@@ -1,8 +1,8 @@
-package org.felixrilling.musql;
+package dev.rilling.musql;
 
+import dev.rilling.musql.core.FileEntity;
+import dev.rilling.musql.core.FileEntityService;
 import org.apache.commons.io.file.AccumulatorPathVisitor;
-import org.felixrilling.musql.core.FileEntity;
-import org.felixrilling.musql.core.FileEntityService;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

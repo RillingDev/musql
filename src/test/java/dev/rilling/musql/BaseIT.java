@@ -1,4 +1,4 @@
-package org.felixrilling.musql;
+package dev.rilling.musql;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.test.context.SpringBootTest;

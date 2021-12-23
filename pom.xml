@@ -8,10 +8,10 @@
 		<version>2.6.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.example</groupId>
+	<groupId>dev.rilling</groupId>
 	<artifactId>musql</artifactId>
 	<version>0.2.0-SNAPSHOT</version>
-	<name>musql</name>
+	<name>Music tags to SQL conversion</name>
 	<description>musql</description>
 	<properties>
 		<java.version>17</java.version>

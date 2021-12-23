@@ -1,6 +1,6 @@
-package org.felixrilling.musql.core;
+package dev.rilling.musql.core;
 
-import org.felixrilling.musql.core.metadata.MetadataUtils;
+import dev.rilling.musql.core.metadata.MetadataUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Repository;
 

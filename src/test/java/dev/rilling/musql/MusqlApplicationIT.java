@@ -1,4 +1,4 @@
-package org.felixrilling.musql;
+package dev.rilling.musql;
 
 import org.junit.jupiter.api.Test;
 

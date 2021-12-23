@@ -1,7 +1,7 @@
-package org.felixrilling.musql.core;
+package dev.rilling.musql.core;
 
+import dev.rilling.musql.core.metadata.MetadataService;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.felixrilling.musql.core.metadata.MetadataService;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
