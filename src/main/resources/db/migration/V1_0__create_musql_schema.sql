@@ -1,4 +1,4 @@
-/* This schema is built to work in PostgreSQL and H2 */
+-- This schema is built to work in both PostgreSQL and H2.
 
 CREATE SCHEMA IF NOT EXISTS musql;
 
@@ -9,26 +9,30 @@ CREATE TABLE musql.file
 	sha256_hash BYTEA   NOT NULL
 );
 
+-- Note that even for a single combination of `file_id` and `key`,
+-- multiple rows may exist in the case of multi-valued tags.
 CREATE TABLE musql.file_tag
 (
 	id      BIGINT  NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 	file_id BIGINT  NOT NULL,
 	key     VARCHAR NOT NULL,
-	value   VARCHAR NOT NULL, /* Maybe use TEXT instead, but h2 does not support indexing it. */
+	-- Maybe use TEXT instead, but H2 does not support indexing it.
+	-- Name is shorted to `val instead of `value` as the later is a reserved word in SQL2016.
+	val     VARCHAR NOT NULL,
 	CONSTRAINT file_tag_file_fk FOREIGN KEY (file_id) REFERENCES musql.file (id) ON DELETE CASCADE
 );
 
-/* Useful for most queries operating on tags as they almost always go by key, and often go by value */
-CREATE INDEX file_tag_key_value_ix ON musql.file_tag (key, value);
+-- Useful for most queries operating on tags as they almost always go by key, and often go by value.
+CREATE INDEX file_tag_key_value_ix ON musql.file_tag (key, val);
 
 
 
 CREATE VIEW musql.demo_genre_popularity AS
-SELECT t.value, COUNT(t.value)
+SELECT t.val, COUNT(t.val)
 FROM musql.file_tag t
 WHERE t.key = 'genre'
-GROUP BY t.value
-ORDER BY COUNT(t.value) DESC;
+GROUP BY t.val
+ORDER BY COUNT(t.val) DESC;
 
 CREATE VIEW musql.demo_tracks_from_cd AS
 SELECT f.path
@@ -38,5 +42,5 @@ WHERE f.id IN
 		  SELECT t.file_id
 		  FROM musql.file_tag t
 		  WHERE t.key = 'media'
-			AND t.value = 'CD'
+			AND t.val = 'CD'
 	  )

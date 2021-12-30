@@ -105,7 +105,7 @@ class FileRepository {
 
 	private @NotNull Map<String, Set<String>> loadMetadataByFileId(@NotNull Connection con, long fileId)
 		throws SQLException {
-		try (PreparedStatement ps = con.prepareStatement("SELECT key, value FROM musql.file_tag f WHERE f.file_id = ?")) {
+		try (PreparedStatement ps = con.prepareStatement("SELECT key, val FROM musql.file_tag f WHERE f.file_id = ?")) {
 			ps.setLong(1, fileId);
 			ps.execute();
 			Map<String, Set<String>> map = new HashMap<>(15);
@@ -123,7 +123,7 @@ class FileRepository {
 	private void insertMetadata(@NotNull Connection connection, long fileId, @NotNull Map<String, Set<String>> metadata)
 		throws SQLException {
 		try (PreparedStatement ps = connection.prepareStatement(
-			"INSERT INTO musql.file_tag (file_id, key, value) VALUES (?, ?, ?)")) {
+			"INSERT INTO musql.file_tag (file_id, key, val) VALUES (?, ?, ?)")) {
 			for (Map.Entry<String, Set<String>> entry : metadata.entrySet()) {
 				String key = entry.getKey();
 				for (String value : entry.getValue()) {
