@@ -7,9 +7,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 @Service
@@ -19,15 +16,8 @@ class MappingService {
 
 	@PostConstruct
 	void init() throws IOException {
-		Properties properties = new Properties();
-		Path path = Paths.get("key.mapping.properties");
-		try (InputStream inStream = Files.newInputStream(path)) {
-			properties.load(inStream);
-		}
-		Map<String, String> map = stringMapForProperties(properties);
-		keyMapping = Collections.unmodifiableMap(map);
+		keyMapping = loadKeyMapping();
 	}
-
 	/**
 	 * Maps the given key to a key ready for output.
 	 *
@@ -47,6 +37,15 @@ class MappingService {
 	}
 
 	@NotNull
+	private Map<String, String> loadKeyMapping() throws IOException {
+		Properties properties = new Properties();
+		try (InputStream inStream = getClass().getClassLoader().getResourceAsStream("key.mapping.properties")) {
+			properties.load(inStream);
+		}
+		return Collections.unmodifiableMap(stringMapForProperties(properties));
+	}
+
+	@NotNull
 	private Map<String, String> stringMapForProperties(@NotNull Properties properties) {
 		Map<String, String> map = new HashMap<>(properties.size());
 		for (String propertyName : properties.stringPropertyNames()) {
@@ -54,4 +53,5 @@ class MappingService {
 		}
 		return map;
 	}
+
 }
