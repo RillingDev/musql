@@ -1,6 +1,5 @@
 package dev.rilling.musql.core.metadata;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +17,7 @@ class MappingService {
 	void init() throws IOException {
 		keyMapping = loadKeyMapping();
 	}
+
 	/**
 	 * Maps the given key to a key ready for output.
 	 *
@@ -27,7 +27,7 @@ class MappingService {
 	public @NotNull Optional<String> mapKey(@NotNull String originalKey) {
 		if (keyMapping.containsKey(originalKey)) {
 			String newKey = keyMapping.get(originalKey);
-			if (StringUtils.isBlank(newKey)) {
+			if (newKey.isBlank()) {
 				return Optional.empty();
 			}
 			return Optional.of(newKey);
