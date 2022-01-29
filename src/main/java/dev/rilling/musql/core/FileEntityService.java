@@ -29,6 +29,13 @@ public class FileEntityService {
 		this.metadataService = metadataService;
 	}
 
+	/**
+	 * Loads file data as a {@link FileEntity}.
+	 *
+	 * @param file File to parse. Must be a regular, existing file.
+	 * @return File entity with parsed data.
+	 * @throws IOException if IO fails.
+	 */
 	public @NotNull FileEntity loadFile(@NotNull Path file) throws IOException {
 		if (!Files.exists(file)) {
 			throw new IllegalArgumentException("Path '%s' does not exist.".formatted(file));
@@ -37,7 +44,9 @@ public class FileEntityService {
 			throw new IllegalArgumentException("Path '%s' is not a regular file.".formatted(file));
 		}
 
-		@NotNull Map<String, Set<String>> metadata = metadataService.parse(file);
+		@NotNull Map<String, Set<String>> metadata = metadataService.parse(file)
+			.orElseThrow(() -> new IOException("Path '%s' metadata could not be extracted.".formatted(file)));
+
 		byte[] sha256Hash = calcSha256Hash(file);
 
 		return new FileEntity(null, file.normalize(), sha256Hash, metadata);
@@ -49,6 +58,11 @@ public class FileEntityService {
 		}
 	}
 
+	/**
+	 * Persists this entity.
+	 *
+	 * @param fileEntity File entity to persist.
+	 */
 	public void save(@NotNull FileEntity fileEntity) {
 		Optional<FileEntity> existing = fileRepository.loadByPath(fileEntity.path());
 		if (existing.isPresent()) {

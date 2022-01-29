@@ -2,6 +2,7 @@ package dev.rilling.musql.core.metadata;
 
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
+import org.apache.tika.metadata.TikaCoreProperties;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
@@ -26,7 +27,7 @@ public class MetadataService {
 		this.mappingService = mappingService;
 	}
 
-	public @NotNull Map<String, Set<String>> parse(@NotNull Path file) throws IOException {
+	public @NotNull Optional<Map<String, Set<String>>> parse(@NotNull Path file) throws IOException {
 		Metadata metadata = new Metadata();
 		Parser parser = new AutoDetectParser();
 		ContentHandler handler = new DefaultHandler();
@@ -37,7 +38,12 @@ public class MetadataService {
 		} catch (TikaException | SAXException e) {
 			throw new IOException("Could not parse file.", e);
 		}
-		return convertMetadata(metadata);
+
+		if ("org.apache.tika.parser.EmptyParser".equals(metadata.get(TikaCoreProperties.TIKA_PARSED_BY))) {
+			return Optional.empty();
+		}
+
+		return Optional.of(convertMetadata(metadata));
 	}
 
 	private @NotNull Map<String, Set<String>> convertMetadata(@NotNull Metadata metadata) {
