@@ -38,14 +38,14 @@ public class FileEntityService {
 	 */
 	public @NotNull FileEntity loadFile(@NotNull Path file) throws IOException {
 		if (!Files.exists(file)) {
-			throw new IllegalArgumentException("Path '%s' does not exist.".formatted(file));
+			throw new IllegalArgumentException("File '%s' does not exist.".formatted(file));
 		}
 		if (!Files.isRegularFile(file)) {
-			throw new IllegalArgumentException("Path '%s' is not a regular file.".formatted(file));
+			throw new IllegalArgumentException("File '%s' is not a regular file.".formatted(file));
 		}
 
 		@NotNull Map<String, Set<String>> metadata = metadataService.parse(file)
-			.orElseThrow(() -> new IOException("Path '%s' metadata could not be extracted.".formatted(file)));
+			.orElseThrow(() -> new IOException("File '%s' metadata could not be extracted.".formatted(file)));
 
 		byte[] sha256Hash = calcSha256Hash(file);
 
