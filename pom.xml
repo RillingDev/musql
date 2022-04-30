@@ -11,7 +11,7 @@
 
 	<groupId>dev.rilling</groupId>
 	<artifactId>musql</artifactId>
-	<version>0.2.0-SNAPSHOT</version>
+	<version>0.2.0</version>
 	<name>musql</name>
 	<description>Music tags to SQL conversion</description>
 
