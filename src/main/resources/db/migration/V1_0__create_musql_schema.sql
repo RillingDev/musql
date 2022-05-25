@@ -34,13 +34,28 @@ WHERE t.key = 'genre'
 GROUP BY t.val
 ORDER BY COUNT(t.val) DESC;
 
+CREATE VIEW musql.demo_year_popularity AS
+SELECT t.val, COUNT(t.val)
+FROM musql.file_tag t
+WHERE t.key = 'originalyear'
+GROUP BY t.val
+ORDER BY t.val;
+
 CREATE VIEW musql.demo_tracks_from_cd AS
 SELECT f.path
 FROM musql.file f
-WHERE f.id IN
-	  (
-		  SELECT t.file_id
-		  FROM musql.file_tag t
-		  WHERE t.key = 'media'
-			AND t.val = 'CD'
-	  )
+		 LEFT JOIN musql.file_tag t ON f.id = t.file_id
+WHERE t.key = 'media'
+  AND t.val = 'CD'
+ORDER BY f.path;
+
+CREATE VIEW musql.demo_tracks_missing_genres AS
+SELECT f.path
+FROM musql.file f
+WHERE f.id NOT IN
+	  (SELECT t.file_id
+	   FROM musql.file_tag t
+	   WHERE t.key = 'genre')
+ORDER BY f.path
+
+
