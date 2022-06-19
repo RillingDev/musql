@@ -105,15 +105,15 @@ class FileRepository {
 
 	private @NotNull Map<String, Set<String>> loadMetadataByFileId(@NotNull Connection con, long fileId)
 		throws SQLException {
-		try (PreparedStatement ps = con.prepareStatement("SELECT key, val FROM musql.file_tag f WHERE f.file_id = ?")) {
+		try (PreparedStatement ps = con.prepareStatement("SELECT name, val FROM musql.file_tag f WHERE f.file_id = ?")) {
 			ps.setLong(1, fileId);
 			ps.execute();
 			Map<String, Set<String>> map = new HashMap<>(15);
 			try (ResultSet rs = ps.getResultSet()) {
 				while (rs.next()) {
-					String key = rs.getString(1);
+					String name = rs.getString(1);
 					String value = rs.getString(2);
-					map.computeIfAbsent(key, (ignored) -> new HashSet<>(1)).add(value);
+					map.computeIfAbsent(name, (ignored) -> new HashSet<>(1)).add(value);
 				}
 			}
 			return MetadataUtils.createUnmodifiableMetadata(map);
@@ -123,12 +123,12 @@ class FileRepository {
 	private void insertMetadata(@NotNull Connection connection, long fileId, @NotNull Map<String, Set<String>> metadata)
 		throws SQLException {
 		try (PreparedStatement ps = connection.prepareStatement(
-			"INSERT INTO musql.file_tag (file_id, key, val) VALUES (?, ?, ?)")) {
+			"INSERT INTO musql.file_tag (file_id, name, val) VALUES (?, ?, ?)")) {
 			for (Map.Entry<String, Set<String>> entry : metadata.entrySet()) {
-				String key = entry.getKey();
+				String name = entry.getKey();
 				for (String value : entry.getValue()) {
 					ps.setLong(1, fileId);
-					ps.setString(2, key);
+					ps.setString(2, name);
 					ps.setString(3, value);
 					ps.addBatch();
 				}
