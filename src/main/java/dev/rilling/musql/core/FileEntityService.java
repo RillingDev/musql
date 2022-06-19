@@ -56,6 +56,7 @@ public class FileEntityService {
 	 *
 	 * @param fileEntity File entity to persist.
 	 */
+	// TODO: shift logic into SQL once H2 supports upsert
 	public void save(@NotNull FileEntity fileEntity) {
 		Optional<FileEntity> existing = fileRepository.loadByPath(fileEntity.path());
 		if (existing.isPresent()) {
