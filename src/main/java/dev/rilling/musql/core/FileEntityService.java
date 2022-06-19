@@ -1,17 +1,15 @@
 package dev.rilling.musql.core;
 
 import dev.rilling.musql.core.metadata.MetadataService;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
+import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -44,19 +42,14 @@ public class FileEntityService {
 			throw new IllegalArgumentException("File '%s' is not a regular file.".formatted(file));
 		}
 
+		Instant lastModified = Files.getLastModifiedTime(file).toInstant();
+
 		@NotNull Map<String, Set<String>> metadata = metadataService.parse(file)
 			.orElseThrow(() -> new IOException("File '%s' metadata could not be extracted.".formatted(file)));
 
-		byte[] sha256Hash = calcSha256Hash(file);
-
-		return new FileEntity(null, file.normalize(), sha256Hash, metadata);
+		return new FileEntity(null, file, lastModified, metadata);
 	}
 
-	private byte[] calcSha256Hash(@NotNull Path file) throws IOException {
-		try (InputStream inputStream = Files.newInputStream(file)) {
-			return DigestUtils.sha256(inputStream);
-		}
-	}
 
 	/**
 	 * Persists this entity.
@@ -67,13 +60,13 @@ public class FileEntityService {
 		Optional<FileEntity> existing = fileRepository.loadByPath(fileEntity.path());
 		if (existing.isPresent()) {
 			FileEntity existingEntity = existing.get();
-			if (Arrays.equals(existingEntity.sha256Hash(), fileEntity.sha256Hash())) {
-				LOGGER.info("For path '{}' an entry was found and its hash matches, not changing anything.",
+			if (!fileEntity.lastModified().isAfter(existingEntity.lastModified())) {
+				LOGGER.info("For path '{}' an entry was found and it was not modified since, not changing anything.",
 					fileEntity.path());
 				return;
 			}
 
-			LOGGER.info("For path '{}' an entry was found, but with a different hash, replacing it.",
+			LOGGER.info("For path '{}' an entry was found, but with a later modified date, replacing it.",
 				fileEntity.path());
 			fileRepository.delete(existingEntity);
 		} else {

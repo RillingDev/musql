@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.nio.file.Path;
 import java.sql.*;
+import java.time.Instant;
 import java.util.*;
 
 @Repository
@@ -26,23 +27,23 @@ class FileRepository {
 	 */
 	public @NotNull Optional<FileEntity> loadByPath(@NotNull Path path) {
 		try (Connection con = dataSource.getConnection(); PreparedStatement ps = con.prepareStatement(
-			"SELECT id, sha256_hash FROM musql.file f WHERE f.path = ?")) {
+			"SELECT id, last_modified FROM musql.file f WHERE f.path = ?")) {
 			ps.setString(1, serializePath(path));
 			ps.execute();
 
 			long id;
-			byte[] sha256Hash;
+			Instant last_modified;
 			try (ResultSet rs = ps.getResultSet()) {
 				if (rs.next()) {
 					id = rs.getLong(1);
-					sha256Hash = rs.getBytes(2);
+					last_modified = rs.getTimestamp(2).toInstant();
 				} else {
 					return Optional.empty();
 				}
 			}
 
 			Map<String, Set<String>> metadata = loadMetadataByFileId(con, id);
-			return Optional.of(new FileEntity(id, path, sha256Hash, metadata));
+			return Optional.of(new FileEntity(id, path, last_modified, metadata));
 		} catch (SQLException e) {
 			throw new PersistenceException(e);
 		}
@@ -69,10 +70,10 @@ class FileRepository {
 	}
 
 	private void doInsert(@NotNull Connection con, @NotNull FileEntity fileEntity) throws SQLException {
-		try (PreparedStatement ps = con.prepareStatement("INSERT INTO musql.file (path, sha256_hash) VALUES (?, ?)",
+		try (PreparedStatement ps = con.prepareStatement("INSERT INTO musql.file (path, last_modified) VALUES (?, ?)",
 			Statement.RETURN_GENERATED_KEYS)) {
 			ps.setString(1, fileEntity.path().toString());
-			ps.setBytes(2, fileEntity.sha256Hash());
+			ps.setTimestamp(2, Timestamp.from(fileEntity.lastModified()));
 			ps.executeUpdate();
 
 			long id;

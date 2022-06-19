@@ -4,9 +4,9 @@ CREATE SCHEMA IF NOT EXISTS musql;
 
 CREATE TABLE musql.file
 (
-	id          BIGINT  NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	path        VARCHAR NOT NULL UNIQUE,
-	sha256_hash BYTEA   NOT NULL
+	id            BIGINT    NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	path          VARCHAR   NOT NULL UNIQUE,
+	last_modified TIMESTAMP NOT NULL -- Timezone-less file timestamp
 );
 
 -- Note that even for a single combination of `file_id` and `name`,
