@@ -32,18 +32,18 @@ class FileRepository {
 			ps.execute();
 
 			long id;
-			Instant last_modified;
+			Instant lastModified;
 			try (ResultSet rs = ps.getResultSet()) {
 				if (rs.next()) {
 					id = rs.getLong(1);
-					last_modified = rs.getTimestamp(2).toInstant();
+					lastModified = rs.getTimestamp(2).toInstant();
 				} else {
 					return Optional.empty();
 				}
 			}
 
 			Map<String, Set<String>> metadata = loadMetadataByFileId(con, id);
-			return Optional.of(new FileEntity(id, path, last_modified, metadata));
+			return Optional.of(new FileEntity(id, path, lastModified, metadata));
 		} catch (SQLException e) {
 			throw new PersistenceException(e);
 		}
