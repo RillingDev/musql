@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class MetadataService {
@@ -63,7 +64,13 @@ public class MetadataService {
 				hashMap.put(key, Set.of(value));
 			}
 		}
-		return MetadataUtils.createUnmodifiableMetadata(hashMap);
+		return createUnmodifiableMetadata(hashMap);
 	}
 
+	private static @NotNull Map<String, Set<String>> createUnmodifiableMetadata(@NotNull Map<String, Set<String>> metadata) {
+		return metadata.entrySet()
+			.stream()
+			.map(e -> Map.entry(e.getKey(), Collections.unmodifiableSet(e.getValue())))
+			.collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+	}
 }

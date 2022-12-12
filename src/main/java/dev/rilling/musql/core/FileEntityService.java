@@ -11,7 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -47,7 +46,7 @@ public class FileEntityService {
 		@NotNull Map<String, Set<String>> metadata = metadataService.parse(file)
 			.orElseThrow(() -> new IOException("File '%s' metadata could not be extracted.".formatted(file)));
 
-		return new FileEntity(null, file, lastModified, metadata);
+		return new FileEntity(file, lastModified, metadata);
 	}
 
 	/**
@@ -56,22 +55,16 @@ public class FileEntityService {
 	 * @param fileEntity File entity to persist.
 	 */
 	public void save(@NotNull FileEntity fileEntity) {
-		Optional<FileEntity> existing = fileRepository.loadByPath(fileEntity.path());
-		if (existing.isPresent()) {
-			FileEntity existingEntity = existing.get();
-			if (!fileEntity.lastModified().isAfter(existingEntity.lastModified())) {
-				LOGGER.info("For path '{}' an entry was found and it was not modified since, not changing anything.",
-					fileEntity.path());
-				return;
+		if (fileRepository.hasByPath(fileEntity.path())) {
+			if (fileRepository.deleteOutdatedByPath(fileEntity.path(), fileEntity.lastModified())) {
+				LOGGER.info("For path '{}' an outdated entry was found, replacing it.", fileEntity.path());
+				fileRepository.insert(fileEntity);
+			} else {
+				LOGGER.info("For path '{}' a current entry was found, skipping it.", fileEntity.path());
 			}
-
-			LOGGER.info("For path '{}' an entry was found, but with a later modified date, replacing it.",
-				fileEntity.path());
-			fileRepository.delete(existingEntity);
 		} else {
 			LOGGER.info("For path '{}' no entry was found, creating it.", fileEntity.path());
+			fileRepository.insert(fileEntity);
 		}
-
-		fileRepository.insert(fileEntity);
 	}
 }
