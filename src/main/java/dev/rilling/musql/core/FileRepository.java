@@ -72,8 +72,8 @@ class FileRepository {
 	private void doInsert(@NotNull Connection con, @NotNull FileEntity fileEntity) throws SQLException {
 		try (PreparedStatement ps = con.prepareStatement("INSERT INTO musql.file (path, last_modified) VALUES (?, ?)",
 			Statement.RETURN_GENERATED_KEYS)) {
-			ps.setString(1, fileEntity.path().toString());
-			ps.setTimestamp(2, Timestamp.from(fileEntity.lastModified()));
+			ps.setString(1, serializePath(fileEntity.path()));
+			ps.setTimestamp(2, serializeInstant(fileEntity.lastModified()));
 			ps.executeUpdate();
 
 			long id;
@@ -98,10 +98,6 @@ class FileRepository {
 		} catch (SQLException e) {
 			throw new PersistenceException(e);
 		}
-	}
-
-	private @NotNull String serializePath(@NotNull Path path) {
-		return path.toString();
 	}
 
 	private @NotNull Map<String, Set<String>> loadMetadataByFileId(@NotNull Connection con, long fileId)
@@ -137,4 +133,13 @@ class FileRepository {
 			ps.executeBatch();
 		}
 	}
+
+	private static @NotNull Timestamp serializeInstant(@NotNull Instant instant) {
+		return Timestamp.from(instant);
+	}
+
+	private static @NotNull String serializePath(@NotNull Path path) {
+		return path.toString();
+	}
+
 }
