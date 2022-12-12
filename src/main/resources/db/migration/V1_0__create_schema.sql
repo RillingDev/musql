@@ -1,6 +1,6 @@
 -- This schema is built to work in both PostgreSQL and H2.
 
-CREATE SCHEMA IF NOT EXISTS musql;
+CREATE SCHEMA musql;
 
 CREATE TABLE musql.file
 (
