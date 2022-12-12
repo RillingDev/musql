@@ -6,6 +6,10 @@
 
 Reads metadata from music files and inserts them into a relational database for further processing.
 
+### Requirements
+
+- Java Runtime Environment 17
+
 ## Usage
 
 Either [PostgreSQL](https://www.postgresql.org/) or [H2](https://h2database.com/html/main.html) are supported as
