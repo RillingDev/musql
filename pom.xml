@@ -21,7 +21,7 @@
 		<tika.version>2.9.1</tika.version>
 		<vorbis-java.version>0.8</vorbis-java.version>
 
-		<testcontainers.version>1.18.3</testcontainers.version>
+		<testcontainers.version>1.19.1</testcontainers.version>
 	</properties>
 
 	<dependencies>
