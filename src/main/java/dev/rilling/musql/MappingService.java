@@ -1,4 +1,4 @@
-package dev.rilling.musql.core.metadata;
+package dev.rilling.musql;
 
 import jakarta.annotation.PostConstruct;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +24,7 @@ class MappingService {
 	 * @param originalKey The original key.
 	 * @return The key to use. If empty, key can be omitted.
 	 */
-	public @NotNull Optional<String> mapKey(@NotNull String originalKey) {
+	public Optional<String> mapKey(String originalKey) {
 		if (keyMapping.containsKey(originalKey)) {
 			String newKey = keyMapping.get(originalKey);
 			if (newKey.isBlank()) {
@@ -46,7 +46,7 @@ class MappingService {
 	}
 
 	@NotNull
-	private Map<String, String> stringMapForProperties(@NotNull Properties properties) {
+	private Map<String, String> stringMapForProperties(Properties properties) {
 		Map<String, String> map = new HashMap<>(properties.size());
 		for (String propertyName : properties.stringPropertyNames()) {
 			map.put(propertyName, properties.getProperty(propertyName));

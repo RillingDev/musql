@@ -1,7 +1,5 @@
-package dev.rilling.musql.core;
+package dev.rilling.musql;
 
-import dev.rilling.musql.core.metadata.MetadataService;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -33,7 +31,7 @@ public class FileEntityService {
 	 * @return File entity with parsed data.
 	 * @throws IOException if IO fails.
 	 */
-	public @NotNull FileEntity loadFile(@NotNull Path file) throws IOException {
+	public FileEntity loadFile(Path file) throws IOException {
 		if (!Files.exists(file)) {
 			throw new IllegalArgumentException("File '%s' does not exist.".formatted(file));
 		}
@@ -43,7 +41,7 @@ public class FileEntityService {
 
 		Instant lastModified = Files.getLastModifiedTime(file).toInstant();
 
-		@NotNull Map<String, Set<String>> metadata = metadataService.parse(file)
+		Map<String, Set<String>> metadata = metadataService.parse(file)
 			.orElseThrow(() -> new IOException("File '%s' metadata could not be extracted.".formatted(file)));
 
 		return new FileEntity(file, lastModified, metadata);
@@ -54,7 +52,7 @@ public class FileEntityService {
 	 *
 	 * @param fileEntity File entity to persist.
 	 */
-	public void save(@NotNull FileEntity fileEntity) {
+	public void save(FileEntity fileEntity) {
 		if (fileRepository.hasByPath(fileEntity.path())) {
 			if (fileRepository.deleteOutdatedByPath(fileEntity.path(), fileEntity.lastModified())) {
 				LOGGER.info("For path '{}' an outdated entry was found, replacing it.", fileEntity.path());

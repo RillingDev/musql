@@ -1,6 +1,5 @@
-package dev.rilling.musql.core;
+package dev.rilling.musql;
 
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -27,7 +26,7 @@ class FileRepository {
 	 * @param path Path to load by.
 	 * @return if it exists.
 	 */
-	public boolean hasByPath(@NotNull Path path) {
+	public boolean hasByPath(Path path) {
 		try (Connection con = dataSource.getConnection(); PreparedStatement ps = con.prepareStatement(
 			"SELECT COUNT(*) FROM musql.file f WHERE f.path = ?")) {
 			ps.setString(1, serializePath(path));
@@ -49,7 +48,7 @@ class FileRepository {
 	 * @param lastModified Last modified date.
 	 * @return if an entry was deleted.
 	 */
-	public boolean deleteOutdatedByPath(@NotNull Path path, @NotNull Instant lastModified) {
+	public boolean deleteOutdatedByPath(Path path, Instant lastModified) {
 		try (Connection con = dataSource.getConnection(); PreparedStatement ps = con.prepareStatement(
 			"DELETE FROM musql.file f WHERE f.path = ? AND f.last_modified < ?")) {
 			ps.setString(1, serializePath(path));
@@ -65,7 +64,7 @@ class FileRepository {
 	 *
 	 * @param fileEntity Entity to persist.
 	 */
-	public void insert(@NotNull FileEntity fileEntity) {
+	public void insert(FileEntity fileEntity) {
 		try (Connection con = dataSource.getConnection()) {
 			con.setAutoCommit(false);
 			try {
@@ -80,7 +79,7 @@ class FileRepository {
 		}
 	}
 
-	private void doInsert(@NotNull Connection con, @NotNull FileEntity fileEntity) throws SQLException {
+	private void doInsert(Connection con, FileEntity fileEntity) throws SQLException {
 		try (PreparedStatement ps = con.prepareStatement("INSERT INTO musql.file (path, last_modified) VALUES (?, ?)",
 			Statement.RETURN_GENERATED_KEYS)) {
 			ps.setString(1, serializePath(fileEntity.path()));
@@ -96,7 +95,7 @@ class FileRepository {
 		}
 	}
 
-	private void insertMetadata(@NotNull Connection connection, long fileId, @NotNull Map<String, Set<String>> metadata)
+	private void insertMetadata(Connection connection, long fileId, Map<String, Set<String>> metadata)
 		throws SQLException {
 		try (PreparedStatement ps = connection.prepareStatement(
 			"INSERT INTO musql.file_tag (file_id, name, val) VALUES (?, ?, ?)")) {
@@ -113,11 +112,11 @@ class FileRepository {
 		}
 	}
 
-	private static @NotNull Timestamp serializeInstant(@NotNull Instant instant) {
+	private static Timestamp serializeInstant(Instant instant) {
 		return Timestamp.from(instant.truncatedTo(ChronoUnit.SECONDS)); // Truncating makes comparisons easier
 	}
 
-	private static @NotNull String serializePath(@NotNull Path path) {
+	private static String serializePath(Path path) {
 		return path.toString();
 	}
 

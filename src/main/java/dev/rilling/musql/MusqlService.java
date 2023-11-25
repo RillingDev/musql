@@ -1,9 +1,6 @@
 package dev.rilling.musql;
 
-import dev.rilling.musql.core.FileEntity;
-import dev.rilling.musql.core.FileEntityService;
 import org.apache.commons.io.file.AccumulatorPathVisitor;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -30,11 +27,11 @@ public class MusqlService {
 	 *
 	 * @param entryPoints Files or directories to parse. Must exist.
 	 */
-	public void processRecursively(@NotNull Collection<Path> entryPoints) {
+	public void processRecursively(Collection<Path> entryPoints) {
 		entryPoints.stream().flatMap(this::findFiles).forEach(this::processFile);
 	}
 
-	private void processFile(@NotNull Path file) {
+	private void processFile(Path file) {
 		LOGGER.info("Starting import of file '{}'.", file);
 		try {
 			FileEntity fileEntity = fileEntityService.loadFile(file);
@@ -46,7 +43,7 @@ public class MusqlService {
 		}
 	}
 
-	private @NotNull Stream<Path> findFiles(@NotNull Path path) {
+	private Stream<Path> findFiles(Path path) {
 		if (Files.isRegularFile(path)) {
 			return Stream.of(path);
 		}

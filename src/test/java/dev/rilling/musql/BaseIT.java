@@ -1,6 +1,5 @@
 package dev.rilling.musql;
 
-import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
@@ -16,7 +15,7 @@ abstract class BaseIT {
 	static class H2DataSourceInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
 		@Override
-		public void initialize(@NotNull ConfigurableApplicationContext applicationContext) {
+		public void initialize(ConfigurableApplicationContext applicationContext) {
 			TestPropertyValues.of(Map.ofEntries(Map.entry("spring.datasource.url", "jdbc:h2:mem:musql"),
 				Map.entry("spring.datasource.username", "sa"),
 				Map.entry("spring.datasource.password", ""))).applyTo(applicationContext.getEnvironment());

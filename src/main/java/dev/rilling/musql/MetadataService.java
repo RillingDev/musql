@@ -1,4 +1,4 @@
-package dev.rilling.musql.core.metadata;
+package dev.rilling.musql;
 
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
@@ -6,7 +6,6 @@ import org.apache.tika.metadata.TikaCoreProperties;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -26,7 +25,7 @@ public class MetadataService {
 		this.mappingService = mappingService;
 	}
 
-	public @NotNull Optional<Map<String, Set<String>>> parse(@NotNull Path file) throws IOException {
+	public Optional<Map<String, Set<String>>> parse(Path file) throws IOException {
 		Metadata metadata = new Metadata();
 		Parser parser = new AutoDetectParser();
 		try (InputStream fsStream = Files.newInputStream(file); InputStream inputStream = new BufferedInputStream(
@@ -43,7 +42,7 @@ public class MetadataService {
 		return Optional.of(convertMetadata(metadata));
 	}
 
-	private @NotNull Map<String, Set<String>> convertMetadata(@NotNull Metadata metadata) {
+	private Map<String, Set<String>> convertMetadata(Metadata metadata) {
 		Map<String, Set<String>> mappedMetadata = new HashMap<>(metadata.size());
 		for (String name : metadata.names()) {
 			// Only map names for which a mapping exists
