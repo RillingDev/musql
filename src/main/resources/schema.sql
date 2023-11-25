@@ -52,10 +52,6 @@ ORDER BY f.path;
 CREATE OR REPLACE VIEW musql.demo_tracks_missing_genres AS
 SELECT f.path
 FROM musql.file f
-WHERE f.id NOT IN
-	  (SELECT t.file_id
-	   FROM musql.file_tag t
-	   WHERE t.name = 'genre')
+		 LEFT JOIN musql.file_tag t ON f.id = t.file_id AND t.name = 'genre'
+WHERE t.id is NULL
 ORDER BY f.path
-
-
