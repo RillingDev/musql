@@ -8,7 +8,7 @@ Reads metadata from music files and inserts them into a relational database for 
 
 ### Requirements
 
-- Java Runtime Environment 17
+- Java Runtime Environment 21
 
 ## Usage
 
