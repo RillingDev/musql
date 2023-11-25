@@ -8,7 +8,6 @@ import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -31,11 +30,9 @@ public class MetadataService {
 	public @NotNull Optional<Map<String, Set<String>>> parse(@NotNull Path file) throws IOException {
 		Metadata metadata = new Metadata();
 		Parser parser = new AutoDetectParser();
-		ContentHandler handler = new DefaultHandler();
-		ParseContext context = new ParseContext();
 		try (InputStream fsStream = Files.newInputStream(file); InputStream inputStream = new BufferedInputStream(
 			fsStream)) {
-			parser.parse(inputStream, handler, metadata, context);
+			parser.parse(inputStream, new DefaultHandler(), metadata, new ParseContext());
 		} catch (TikaException | SAXException e) {
 			throw new IOException("Could not parse file.", e);
 		}
