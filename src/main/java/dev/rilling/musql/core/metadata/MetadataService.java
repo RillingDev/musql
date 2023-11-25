@@ -17,7 +17,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class MetadataService {
@@ -45,29 +44,15 @@ public class MetadataService {
 	}
 
 	private @NotNull Map<String, Set<String>> convertMetadata(@NotNull Metadata metadata) {
-		Map<String, Set<String>> hashMap = new HashMap<>(metadata.size());
+		Map<String, Set<String>> mappedMetadata = new HashMap<>(metadata.size());
 		for (String name : metadata.names()) {
-			Optional<String> keyOpt = mappingService.mapKey(name);
-			if (keyOpt.isEmpty()) {
-				continue;
-			}
-			String key = keyOpt.get();
-
-			if (metadata.isMultiValued(name)) {
+			// Only map names for which a mapping exists
+			mappingService.mapKey(name).ifPresent(mappedKey -> {
 				String[] values = metadata.getValues(name);
-				hashMap.put(key, Set.copyOf(Arrays.asList(values)));
-			} else {
-				String value = metadata.get(name);
-				hashMap.put(key, Set.of(value));
-			}
+				mappedMetadata.put(mappedKey, Set.copyOf(Arrays.asList(values)));
+			});
 		}
-		return createUnmodifiableMetadata(hashMap);
+		return Collections.unmodifiableMap(mappedMetadata);
 	}
 
-	private static @NotNull Map<String, Set<String>> createUnmodifiableMetadata(@NotNull Map<String, Set<String>> metadata) {
-		return metadata.entrySet()
-			.stream()
-			.map(e -> Map.entry(e.getKey(), Collections.unmodifiableSet(e.getValue())))
-			.collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
-	}
 }
