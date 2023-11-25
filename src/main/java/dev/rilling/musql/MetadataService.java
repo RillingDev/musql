@@ -6,6 +6,7 @@ import org.apache.tika.metadata.TikaCoreProperties;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -19,10 +20,10 @@ import java.util.*;
 
 @Service
 public class MetadataService {
-	private final MappingService mappingService;
+	private final Environment environment;
 
-	MetadataService(MappingService mappingService) {
-		this.mappingService = mappingService;
+	MetadataService( Environment environment) {
+		this.environment = environment;
 	}
 
 	public Optional<Map<String, Set<String>>> parse(Path file) throws IOException {
@@ -46,12 +47,24 @@ public class MetadataService {
 		Map<String, Set<String>> mappedMetadata = new HashMap<>(metadata.size());
 		for (String name : metadata.names()) {
 			// Only map names for which a mapping exists
-			mappingService.mapKey(name).ifPresent(mappedKey -> {
+			mapKey(name).ifPresent(mappedKey -> {
 				String[] values = metadata.getValues(name);
 				mappedMetadata.put(mappedKey, Set.copyOf(Arrays.asList(values)));
 			});
 		}
 		return Collections.unmodifiableMap(mappedMetadata);
+	}
+
+	private Optional<String> mapKey(String originalKey) {
+		String propertyName = "musql.key-mapping." + originalKey;
+
+		if (!environment.containsProperty(propertyName)) {
+			return Optional.of(originalKey);
+		}
+
+		String mappedKey = environment.getRequiredProperty(propertyName);
+		return mappedKey.isBlank() ? Optional.empty() : Optional.of(mappedKey);
+
 	}
 
 }
