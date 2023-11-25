@@ -22,15 +22,14 @@ import java.util.*;
 public class MetadataService {
 	private final Environment environment;
 
-	MetadataService( Environment environment) {
+	MetadataService(Environment environment) {
 		this.environment = environment;
 	}
 
 	public Optional<Map<String, Set<String>>> parse(Path file) throws IOException {
 		Metadata metadata = new Metadata();
 		Parser parser = new AutoDetectParser();
-		try (InputStream fsStream = Files.newInputStream(file); InputStream inputStream = new BufferedInputStream(
-			fsStream)) {
+		try (InputStream fsStream = Files.newInputStream(file); InputStream inputStream = new BufferedInputStream(fsStream)) {
 			parser.parse(inputStream, new DefaultHandler(), metadata, new ParseContext());
 		} catch (TikaException | SAXException e) {
 			throw new IOException("Could not parse file.", e);
@@ -58,13 +57,14 @@ public class MetadataService {
 	private Optional<String> mapKey(String originalKey) {
 		String propertyName = "musql.key-mapping." + originalKey;
 
-		if (!environment.containsProperty(propertyName)) {
+		String mappedKey = environment.getProperty(propertyName);
+		if (mappedKey == null) {
 			return Optional.of(originalKey);
 		}
-
-		String mappedKey = environment.getRequiredProperty(propertyName);
-		return mappedKey.isBlank() ? Optional.empty() : Optional.of(mappedKey);
-
+		if (mappedKey.isBlank()) {
+			return Optional.empty();
+		}
+		return Optional.of(mappedKey);
 	}
 
 }
