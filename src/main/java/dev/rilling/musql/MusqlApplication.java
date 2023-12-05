@@ -9,8 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 @SpringBootApplication
 public class MusqlApplication implements CommandLineRunner {
@@ -29,18 +28,17 @@ public class MusqlApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) {
-		List<Path> files = new ArrayList<>(args.length);
-		for (String arg : args) {
-			Path path = Paths.get(arg);
-			if (!Files.exists(path)) {
-				throw new IllegalArgumentException("Path '%s' does not exist.".formatted(path));
-			}
-			files.add(path);
+		if (args.length != 1) {
+			throw new IllegalArgumentException("Expected exactly one argument.");
+		}
+		Path path = Paths.get(args[0]);
+		if (!Files.exists(path)) {
+			throw new IllegalArgumentException("Path '%s' does not exist.".formatted(path));
 		}
 
-		LOGGER.debug("Starting import for {} entry point(s).", files.size());
+		LOGGER.debug("Starting import for '{}'.", path);
 
-		musqlService.processRecursively(files);
+		musqlService.processRecursively(Set.of(path));
 
 		LOGGER.info("Import complete.");
 	}

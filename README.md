@@ -15,7 +15,7 @@ Reads metadata from music files and inserts them into a relational database for 
 Either [PostgreSQL](https://www.postgresql.org/) or [H2](https://h2database.com/html/main.html) are supported as
 database targets. Configure them by passing the fitting spring boot configuration parameters.
 
-`java -Dspring.datasource.url=<JDBC URL> -Dspring.datasource.username=<username> -Dspring.datasource.password=<password> -jar musql*.jar [<path to directory or file>...]`
+`java -Dspring.datasource.url=<JDBC URL> -Dspring.datasource.username=<username> -Dspring.datasource.password=<password> -jar musql*.jar [<path to directory or file>]`
 
 ### Example Using H2
 
