@@ -6,7 +6,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
@@ -19,7 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(properties = {"musql.key-mapping.xmpDM\\:artist=artist", "musql.key-mapping.dc\\:title="})
+@TestPropertySource(properties = {"musql.key-mapping.xmpDM\\:artist=artist", "musql.key-mapping.dc\\:title="})
+@ContextConfiguration(classes = MetadataService.class)
 class MetadataServiceTest {
 
 	@Autowired

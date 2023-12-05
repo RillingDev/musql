@@ -38,6 +38,7 @@ public class FileEntityService {
 				LOGGER.info("For path '{}' an outdated entry was found, replacing it.", fileEntity.path());
 				fileRepository.insert(fileEntity);
 			} else {
+				// TODO: avoid metadata analysis if we end up here.
 				LOGGER.info("For path '{}' a current entry was found, skipping it.", fileEntity.path());
 			}
 		} else {
