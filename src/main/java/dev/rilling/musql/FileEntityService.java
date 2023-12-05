@@ -32,13 +32,6 @@ public class FileEntityService {
 	 * @throws IOException if IO fails.
 	 */
 	public FileEntity loadFile(Path file) throws IOException {
-		if (!Files.exists(file)) {
-			throw new IllegalArgumentException("File '%s' does not exist.".formatted(file));
-		}
-		if (!Files.isRegularFile(file)) {
-			throw new IllegalArgumentException("File '%s' is not a regular file.".formatted(file));
-		}
-
 		Instant lastModified = Files.getLastModifiedTime(file).toInstant();
 
 		Map<String, Set<String>> metadata = metadataService.parse(file);
