@@ -41,8 +41,7 @@ public class FileEntityService {
 
 		Instant lastModified = Files.getLastModifiedTime(file).toInstant();
 
-		Map<String, Set<String>> metadata = metadataService.parse(file)
-			.orElseThrow(() -> new IOException("File '%s' metadata could not be extracted.".formatted(file)));
+		Map<String, Set<String>> metadata = metadataService.parse(file);
 
 		return new FileEntity(file, lastModified, metadata);
 	}

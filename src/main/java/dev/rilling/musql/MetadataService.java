@@ -26,7 +26,16 @@ public class MetadataService {
 		this.environment = environment;
 	}
 
-	public Optional<Map<String, Set<String>>> parse(Path file) throws IOException {
+	/**
+	 * Extracts the metadata for this file.
+	 * <p>
+	 * Mapping may be configured as described in {@link MusqlProperties}.
+	 *
+	 * @param file File to extract metadata from.
+	 * @return Mapped metadata.
+	 * @throws IOException if the file cannot be parsed.
+	 */
+	public Map<String, Set<String>> parse(Path file) throws IOException {
 		Metadata metadata = new Metadata();
 		Parser parser = new AutoDetectParser();
 		try (InputStream fsStream = Files.newInputStream(file); InputStream inputStream = new BufferedInputStream(fsStream)) {
@@ -36,10 +45,10 @@ public class MetadataService {
 		}
 
 		if ("org.apache.tika.parser.EmptyParser".equals(metadata.get(TikaCoreProperties.TIKA_PARSED_BY))) {
-			return Optional.empty();
+			throw new IOException("No parser supports this file type.");
 		}
 
-		return Optional.of(convertMetadata(metadata));
+		return convertMetadata(metadata);
 	}
 
 	private Map<String, Set<String>> convertMetadata(Metadata metadata) {
