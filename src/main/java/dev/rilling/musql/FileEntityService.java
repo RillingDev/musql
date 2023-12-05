@@ -25,26 +25,14 @@ public class FileEntityService {
 	}
 
 	/**
-	 * Loads file data as a {@link FileEntity}.
+	 * Imports the metadata of this file into the data source.
 	 *
-	 * @param file File to parse. Must be a regular, existing file.
-	 * @return File entity with parsed data.
-	 * @throws IOException if IO fails.
+	 * @param file File to import.
+	 * @throws IOException if I/O fails.
 	 */
-	public FileEntity loadFile(Path file) throws IOException {
-		Instant lastModified = Files.getLastModifiedTime(file).toInstant();
+	public void importFile(Path file) throws IOException {
+		FileEntity fileEntity = loadFile(file);
 
-		Map<String, Set<String>> metadata = metadataService.parse(file);
-
-		return new FileEntity(file, lastModified, metadata);
-	}
-
-	/**
-	 * Persists this entity.
-	 *
-	 * @param fileEntity File entity to persist.
-	 */
-	public void save(FileEntity fileEntity) {
 		if (fileRepository.hasByPath(fileEntity.path())) {
 			if (fileRepository.deleteOutdatedByPath(fileEntity.path(), fileEntity.lastModified())) {
 				LOGGER.info("For path '{}' an outdated entry was found, replacing it.", fileEntity.path());
@@ -57,4 +45,14 @@ public class FileEntityService {
 			fileRepository.insert(fileEntity);
 		}
 	}
+
+
+	private FileEntity loadFile(Path file) throws IOException {
+		Instant lastModified = Files.getLastModifiedTime(file).toInstant();
+
+		Map<String, Set<String>> metadata = metadataService.parse(file);
+
+		return new FileEntity(file, lastModified, metadata);
+	}
+
 }

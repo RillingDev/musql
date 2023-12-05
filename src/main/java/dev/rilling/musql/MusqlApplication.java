@@ -45,15 +45,13 @@ public class MusqlApplication implements CommandLineRunner {
 				}
 			});
 		}
-		LOGGER.info("Import complete.");
+		LOGGER.info("Completed import.");
 	}
 
 	private void processFile(Path file) {
 		LOGGER.info("Starting import of file '{}'.", file);
 		try {
-			FileEntity fileEntity = fileEntityService.loadFile(file);
-			LOGGER.debug("Read file '{}'.", file);
-			fileEntityService.save(fileEntity);
+			fileEntityService.importFile(file);
 			LOGGER.info("Completed import of file '{}'.", file);
 		} catch (IOException e) {
 			LOGGER.warn("Could not read/import '{}'.", file, e);
