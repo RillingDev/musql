@@ -3,9 +3,7 @@ package dev.rilling.musql.core;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.simple.JdbcClient;
-import org.springframework.test.context.ContextConfiguration;
 
 import java.nio.file.Path;
 import java.time.Instant;
@@ -14,9 +12,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@JdbcTest
-@ContextConfiguration(classes = {FileEntityRepository.class})
-class FileEntityRepositoryIT {
+abstract class AbstractFileEntityRepositoryIT {
 
 	@Autowired
 	FileEntityRepository fileEntityRepository;
