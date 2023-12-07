@@ -1,4 +1,4 @@
-package dev.rilling.musql;
+package dev.rilling.musql.core;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

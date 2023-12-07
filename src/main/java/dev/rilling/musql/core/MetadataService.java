@@ -1,4 +1,4 @@
-package dev.rilling.musql;
+package dev.rilling.musql.core;
 
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
@@ -19,7 +19,7 @@ import java.nio.file.Path;
 import java.util.*;
 
 @Service
-public class MetadataService {
+class MetadataService {
 	private final Environment environment;
 
 	MetadataService(Environment environment) {
@@ -29,7 +29,7 @@ public class MetadataService {
 	/**
 	 * Extracts the metadata for this file.
 	 * <p>
-	 * Mapping may be configured as described in {@link MusqlProperties}.
+	 * Mapping may be configured as described in {@link dev.rilling.musql.MusqlProperties#getKeyMapping()}.
 	 *
 	 * @param file File to extract metadata from.
 	 * @return Mapped metadata.
@@ -64,9 +64,7 @@ public class MetadataService {
 	}
 
 	private Optional<String> mapKey(String originalKey) {
-		String propertyName = "musql.key-mapping." + originalKey;
-
-		String mappedKey = environment.getProperty(propertyName);
+		String mappedKey = environment.getProperty("musql.key-mapping.%s".formatted(originalKey));
 		if (mappedKey == null) {
 			return Optional.of(originalKey);
 		}

@@ -1,5 +1,6 @@
 package dev.rilling.musql;
 
+import dev.rilling.musql.core.FileEntityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;

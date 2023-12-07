@@ -1,4 +1,4 @@
-package dev.rilling.musql;
+package dev.rilling.musql.core;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,11 +16,11 @@ public class FileEntityService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileEntityService.class);
 
-	private final FileRepository fileRepository;
+	private final FileEntityRepository fileEntityRepository;
 	private final MetadataService metadataService;
 
-	FileEntityService(FileRepository fileRepository, MetadataService metadataService) {
-		this.fileRepository = fileRepository;
+	FileEntityService(FileEntityRepository fileEntityRepository, MetadataService metadataService) {
+		this.fileEntityRepository = fileEntityRepository;
 		this.metadataService = metadataService;
 	}
 
@@ -33,17 +33,17 @@ public class FileEntityService {
 	public void importFile(Path file) throws IOException {
 		FileEntity fileEntity = loadFile(file);
 
-		if (fileRepository.hasByPath(fileEntity.path())) {
-			if (fileRepository.deleteOutdatedByPath(fileEntity.path(), fileEntity.lastModified())) {
+		if (fileEntityRepository.hasByPath(fileEntity.path())) {
+			if (fileEntityRepository.deleteOutdatedByPath(fileEntity.path(), fileEntity.lastModified())) {
 				LOGGER.info("For path '{}' an outdated entry was found, replacing it.", fileEntity.path());
-				fileRepository.insert(fileEntity);
+				fileEntityRepository.insert(fileEntity);
 			} else {
 				// TODO: avoid metadata analysis if we end up here.
 				LOGGER.info("For path '{}' a current entry was found, skipping it.", fileEntity.path());
 			}
 		} else {
 			LOGGER.info("For path '{}' no entry was found, creating it.", fileEntity.path());
-			fileRepository.insert(fileEntity);
+			fileEntityRepository.insert(fileEntity);
 		}
 	}
 

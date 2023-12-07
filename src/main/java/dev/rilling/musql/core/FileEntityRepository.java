@@ -1,4 +1,4 @@
-package dev.rilling.musql;
+package dev.rilling.musql.core;
 
 import org.springframework.stereotype.Repository;
 
@@ -12,11 +12,11 @@ import java.util.Map;
 import java.util.Set;
 
 @Repository
-class FileRepository {
+class FileEntityRepository {
 
 	private final DataSource dataSource;
 
-	FileRepository(DataSource dataSource) {
+	FileEntityRepository(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
 
