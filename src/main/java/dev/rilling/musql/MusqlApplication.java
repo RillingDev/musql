@@ -34,9 +34,6 @@ public class MusqlApplication implements CommandLineRunner {
 			throw new IllegalArgumentException("Expected exactly one argument.");
 		}
 		Path entryPath = Paths.get(args[0]);
-		if (!Files.exists(entryPath)) {
-			throw new IllegalArgumentException("Path '%s' does not exist.".formatted(entryPath));
-		}
 
 		LOGGER.info("Starting import.");
 		try (Stream<Path> stream = Files.walk(entryPath)) {
