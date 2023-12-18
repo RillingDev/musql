@@ -58,8 +58,8 @@ class FileRepository {
 	@Transactional
 	public void insert(Path path, Instant lastModified, Map<String, Set<String>> metadata) {
 		GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-		jdbcClient.sql("INSERT INTO musql.file (path, last_modified) VALUES (?, ?) RETURNING id").params(serializePath(path), serializeInstant(lastModified)).update(keyHolder);
-		long fileId = Objects.requireNonNull(keyHolder.getKey()).longValue();
+		jdbcClient.sql("INSERT INTO musql.file (path, last_modified) VALUES (?, ?)").params(serializePath(path), serializeInstant(lastModified)).update(keyHolder,"id");
+		long fileId = Objects.requireNonNull(keyHolder.getKeyAs(Long.class));
 
 		List<Map.Entry<String, String>> flattenedMetadata = flattenMetadata(metadata);
 		jdbcTemplate.batchUpdate("INSERT INTO musql.file_tag (file_id, name, val) VALUES (?, ?, ?)", new BatchPreparedStatementSetter() {
