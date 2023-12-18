@@ -44,8 +44,8 @@ public class FileEntityService {
 
 		Map<String, Set<String>> metadata = metadataService.parse(file);
 		FileEntity fileEntity = new FileEntity(file, lastModified, metadata);
-		LOGGER.info("Created an entry for the file '{}'.", fileEntity.path());
 		fileEntityRepository.insert(fileEntity);
+		LOGGER.info("Created an entry for the file '{}'.", file);
 	}
 
 

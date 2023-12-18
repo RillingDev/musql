@@ -39,20 +39,15 @@ public class MusqlApplication implements CommandLineRunner {
 		try (Stream<Path> stream = Files.walk(entryPath)) {
 			stream.forEach(path -> {
 				if (Files.isRegularFile(path)) {
-					processFile(path);
+					try {
+						fileEntityService.importFile(path);
+					} catch (IOException e) {
+						LOGGER.warn("Could not read/import file '{}'.", path, e);
+					}
 				}
 			});
 		}
 		LOGGER.info("Completed import.");
 	}
 
-	private void processFile(Path file) {
-		LOGGER.info("Starting import of file '{}'.", file);
-		try {
-			fileEntityService.importFile(file);
-			LOGGER.info("Completed import of file '{}'.", file);
-		} catch (IOException e) {
-			LOGGER.warn("Could not read/import '{}'.", file, e);
-		}
-	}
 }

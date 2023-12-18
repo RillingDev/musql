@@ -76,9 +76,7 @@ class FileEntityRepository {
 
 	private static List<Map.Entry<String, String>> flattenMetadata(Map<String, Set<String>> metadata) {
 		List<Map.Entry<String, String>> list = new ArrayList<>((int) (metadata.size() * 1.5));
-		metadata.forEach((key, values) -> {
-			values.forEach(value -> list.add(Map.entry(key, value)));
-		});
+		metadata.forEach((key, values) -> values.forEach(value -> list.add(Map.entry(key, value))));
 		return list;
 	}
 
