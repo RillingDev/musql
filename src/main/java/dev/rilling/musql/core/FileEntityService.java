@@ -31,29 +31,22 @@ public class FileEntityService {
 	 * @throws IOException if I/O fails.
 	 */
 	public void importFile(Path file) throws IOException {
-		FileEntity fileEntity = loadFile(file);
-
-		if (fileEntityRepository.hasByPath(fileEntity.path())) {
-			if (fileEntityRepository.deleteOutdatedByPath(fileEntity.path(), fileEntity.lastModified())) {
-				LOGGER.info("For path '{}' an outdated entry was found, replacing it.", fileEntity.path());
-				fileEntityRepository.insert(fileEntity);
-			} else {
-				// TODO: avoid metadata analysis if we end up here.
-				LOGGER.info("For path '{}' a current entry was found, skipping it.", fileEntity.path());
-			}
-		} else {
-			LOGGER.info("For path '{}' no entry was found, creating it.", fileEntity.path());
-			fileEntityRepository.insert(fileEntity);
-		}
-	}
-
-
-	private FileEntity loadFile(Path file) throws IOException {
 		Instant lastModified = Files.getLastModifiedTime(file).toInstant();
 
-		Map<String, Set<String>> metadata = metadataService.parse(file);
+		if (fileEntityRepository.countCurrent(file, lastModified) == 1) {
+			LOGGER.info("Skipping the file '{}' because a current entry was found.", file);
+			return;
+		}
 
-		return new FileEntity(file, lastModified, metadata);
+		if (fileEntityRepository.deleteOutdated(file, lastModified) == 1) {
+			LOGGER.info("Deleted an old entry for the file '{}'.", file);
+		}
+
+		Map<String, Set<String>> metadata = metadataService.parse(file);
+		FileEntity fileEntity = new FileEntity(file, lastModified, metadata);
+		LOGGER.info("Created an entry for the file '{}'.", fileEntity.path());
+		fileEntityRepository.insert(fileEntity);
 	}
+
 
 }
