@@ -16,20 +16,20 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Repository
-class FileEntityRepository {
+class FileRepository {
 
 	private final JdbcTemplate jdbcTemplate;
 	private final JdbcClient jdbcClient;
 
-	FileEntityRepository(JdbcTemplate jdbcTemplate, JdbcClient jdbcClient) {
+	FileRepository(JdbcTemplate jdbcTemplate, JdbcClient jdbcClient) {
 		this.jdbcTemplate = jdbcTemplate;
 		this.jdbcClient = jdbcClient;
 	}
 
 	/**
-	 * Counts the entries with the provided path and last modified date.
+	 * Counts the entities with the provided path and last modified date.
 	 *
-	 * @param path         Path to load by.
+	 * @param path         Path of the file.
 	 * @param lastModified Last modified date.
 	 * @return how many entries exist.
 	 */
@@ -40,7 +40,7 @@ class FileEntityRepository {
 	/**
 	 * Deletes an already persisted entity if its last modified date is older than the provided.
 	 *
-	 * @param path         Path to load by.
+	 * @param path         Path of the file.
 	 * @param lastModified Last modified date.
 	 * @return how many entries were deleted.
 	 */
@@ -51,15 +51,17 @@ class FileEntityRepository {
 	/**
 	 * Inserts a new entity.
 	 *
-	 * @param fileEntity Entity to persist.
+	 * @param path         Path of the file.
+	 * @param lastModified Last modified date.
+	 * @param metadata     Metadata of the file.
 	 */
 	@Transactional
-	public void insert(FileEntity fileEntity) {
+	public void insert(Path path, Instant lastModified, Map<String, Set<String>> metadata) {
 		GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-		jdbcClient.sql("INSERT INTO musql.file (path, last_modified) VALUES (?, ?) RETURNING id").params(serializePath(fileEntity.path()), serializeInstant(fileEntity.lastModified())).update(keyHolder);
+		jdbcClient.sql("INSERT INTO musql.file (path, last_modified) VALUES (?, ?) RETURNING id").params(serializePath(path), serializeInstant(lastModified)).update(keyHolder);
 		long fileId = Objects.requireNonNull(keyHolder.getKey()).longValue();
 
-		List<Map.Entry<String, String>> flattenedMetadata = flattenMetadata(fileEntity.metadata());
+		List<Map.Entry<String, String>> flattenedMetadata = flattenMetadata(metadata);
 		jdbcTemplate.batchUpdate("INSERT INTO musql.file_tag (file_id, name, val) VALUES (?, ?, ?)", new BatchPreparedStatementSetter() {
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				Map.Entry<String, String> entry = flattenedMetadata.get(i);

@@ -1,6 +1,6 @@
 package dev.rilling.musql;
 
-import dev.rilling.musql.core.FileEntityService;
+import dev.rilling.musql.core.FileImportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -18,10 +18,10 @@ public class MusqlApplication implements CommandLineRunner {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(MusqlApplication.class);
 
-	private final FileEntityService fileEntityService;
+	private final FileImportService fileImportService;
 
-	public MusqlApplication(FileEntityService fileEntityService) {
-		this.fileEntityService = fileEntityService;
+	public MusqlApplication(FileImportService fileImportService) {
+		this.fileImportService = fileImportService;
 	}
 
 	public static void main(String[] args) {
@@ -40,7 +40,7 @@ public class MusqlApplication implements CommandLineRunner {
 			stream.forEach(path -> {
 				if (Files.isRegularFile(path)) {
 					try {
-						fileEntityService.importFile(path);
+						fileImportService.importFile(path);
 					} catch (IOException e) {
 						LOGGER.warn("Could not read/import file '{}'.", path, e);
 					}

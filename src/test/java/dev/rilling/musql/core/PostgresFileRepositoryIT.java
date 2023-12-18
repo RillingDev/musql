@@ -10,8 +10,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
 @JdbcTest(excludeAutoConfiguration = {TestDatabaseAutoConfiguration.class}) // Disable default embedded test database
-@ContextConfiguration(classes = {FileEntityRepository.class})
-public class PostgresFileEntityRepositoryIT extends AbstractFileEntityRepositoryIT {
+@ContextConfiguration(classes = {FileRepository.class})
+public class PostgresFileRepositoryIT extends AbstractFileRepositoryIT {
 
 	@Container
 	@ServiceConnection
