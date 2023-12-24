@@ -15,11 +15,11 @@ Reads metadata from music files and inserts them into a relational database for 
 Either [PostgreSQL](https://www.postgresql.org/) or [H2](https://h2database.com/html/main.html) are supported as
 database targets. Configure them by passing the fitting spring boot configuration parameters.
 
-`java -Dspring.datasource.url=<JDBC URL> -Dspring.datasource.username=<username> -Dspring.datasource.password=<password> -jar musql*.jar [<path to directory or file>]`
+`java -Dspring.datasource.url=<JDBC URL> -Dspring.datasource.username=<username> -Dspring.datasource.password=<password> -jar musql*.jar <path to directory or file>`
 
 ### Example Using H2
 
-H2 is an embedded database that does not require any external server to be set up.
+H2 is an embedded database that does not require an external server to be set up.
 This will import the data from all files in `./my_music_library/` into an H2 database stored in the `./local` directory.
 
 `java -Dspring.datasource.url=jdbc:h2:./local/musql -Dspring.datasource.username=sa -Dspring.datasource.password="" -jar musql*.jar ./my_music_library/`
