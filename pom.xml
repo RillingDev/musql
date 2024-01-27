@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.1</version>
+		<version>3.2.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
@@ -22,7 +22,7 @@
 		<tika.version>2.9.1</tika.version>
 		<vorbis-java.version>0.8</vorbis-java.version>
 
-		<testcontainers.version>1.19.3</testcontainers.version>
+		<testcontainers.version>1.19.4</testcontainers.version>
 	</properties>
 
 	<dependencies>
