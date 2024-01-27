@@ -10,7 +10,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.stream.Stream;
 
 @SpringBootApplication
@@ -33,7 +32,7 @@ public class MusqlApplication implements CommandLineRunner {
 		if (args.length != 1) {
 			throw new IllegalArgumentException("Expected exactly one argument.");
 		}
-		Path entryPath = Paths.get(args[0]);
+		Path entryPath = Path.of(args[0]);
 
 		LOGGER.info("Starting import.");
 		try (Stream<Path> stream = Files.walk(entryPath)) {

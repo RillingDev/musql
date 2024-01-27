@@ -12,7 +12,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,7 +30,7 @@ class MetadataServiceTest {
 	@CsvSource(value = {"test.flac", "test.mp3"})
 	@DisplayName("maps keys.")
 	void mapsKeys(String fileName) throws IOException {
-		Path testFile = Paths.get("src", "test", "resources", fileName);
+		Path testFile = Path.of("src", "test", "resources", fileName);
 
 		Map<String, Set<String>> metadata = metadataService.parse(testFile);
 
@@ -43,7 +42,7 @@ class MetadataServiceTest {
 	@Test
 	@DisplayName("throws for unsupported.")
 	void name() {
-		Path testFile = Paths.get("src", "test", "resources", "test.txt");
+		Path testFile = Path.of("src", "test", "resources", "test.txt");
 
 		assertThatThrownBy(() -> metadataService.parse(testFile)).isNotNull();
 	}
