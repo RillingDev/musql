@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.2</version>
+		<version>3.2.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
@@ -19,7 +19,7 @@
 	<properties>
 		<java.version>21</java.version>
 
-		<tika.version>2.9.1</tika.version>
+		<tika.version>2.9.2</tika.version>
 		<vorbis-java.version>0.8</vorbis-java.version>
 	</properties>
 
@@ -59,13 +59,6 @@
 			<groupId>org.gagravarr</groupId>
 			<artifactId>vorbis-java-tika</artifactId>
 			<version>${vorbis-java.version}</version>
-		</dependency>
-
-
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<version>1.16.0</version>
 		</dependency>
 
 		<dependency>
