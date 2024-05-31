@@ -1,4 +1,6 @@
 spring:
+    application:
+      name: @project.name@
     sql:
         init:
             mode: always
