@@ -34,7 +34,7 @@ class FileRepository {
 	 * @return how many entries exist.
 	 */
 	public int countCurrent(Path path, Instant lastModified) {
-		return jdbcClient.sql("SELECT COUNT(*) FROM musql.file f WHERE f.path = ? AND last_modified = ?").params(serializePath(path), serializeInstant(lastModified)).query(Integer.class).single();
+		return jdbcClient.sql("SELECT COUNT(*) FROM file f WHERE f.path = ? AND last_modified = ?").params(serializePath(path), serializeInstant(lastModified)).query(Integer.class).single();
 	}
 
 	/**
@@ -45,7 +45,7 @@ class FileRepository {
 	 * @return how many entries were deleted.
 	 */
 	public int deleteOutdated(Path path, Instant lastModified) {
-		return jdbcClient.sql("DELETE FROM musql.file f WHERE f.path = ? AND f.last_modified < ?").params(serializePath(path), serializeInstant(lastModified)).update();
+		return jdbcClient.sql("DELETE FROM file f WHERE f.path = ? AND f.last_modified < ?").params(serializePath(path), serializeInstant(lastModified)).update();
 	}
 
 	/**
@@ -58,11 +58,11 @@ class FileRepository {
 	@Transactional
 	public void insert(Path path, Instant lastModified, Map<String, Set<String>> metadata) {
 		GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-		jdbcClient.sql("INSERT INTO musql.file (path, last_modified) VALUES (?, ?)").params(serializePath(path), serializeInstant(lastModified)).update(keyHolder,"id");
+		jdbcClient.sql("INSERT INTO file (path, last_modified) VALUES (?, ?)").params(serializePath(path), serializeInstant(lastModified)).update(keyHolder,"id");
 		long fileId = Objects.requireNonNull(keyHolder.getKeyAs(Long.class));
 
 		List<Map.Entry<String, String>> flattenedMetadata = flattenMetadata(metadata);
-		jdbcTemplate.batchUpdate("INSERT INTO musql.file_tag (file_id, name, val) VALUES (?, ?, ?)", new BatchPreparedStatementSetter() {
+		jdbcTemplate.batchUpdate("INSERT INTO file_tag (file_id, name, val) VALUES (?, ?, ?)", new BatchPreparedStatementSetter() {
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				Map.Entry<String, String> entry = flattenedMetadata.get(i);
 				ps.setLong(1, fileId);
