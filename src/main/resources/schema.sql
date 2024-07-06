@@ -14,12 +14,11 @@ CREATE TABLE IF NOT EXISTS musql.file
 CREATE TABLE IF NOT EXISTS musql.file_tag
 (
 	id      BIGINT  NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	file_id BIGINT  NOT NULL,
+	file_id BIGINT  NOT NULL REFERENCES musql.file (id) ON DELETE CASCADE,
 	name    VARCHAR NOT NULL,
 	-- Maybe use TEXT instead, but H2 does not support indexing it.
 	-- Name is shorted to `val instead of `value` as the later is a reserved word in SQL2016.
-	val     VARCHAR NOT NULL,
-	CONSTRAINT file_tag_file_fk FOREIGN KEY (file_id) REFERENCES musql.file (id) ON DELETE CASCADE
+	val     VARCHAR NOT NULL
 );
 
 -- Useful for most queries operating on tags as they almost always go by name, and often go by value.
@@ -53,5 +52,5 @@ CREATE OR REPLACE VIEW musql.demo_tracks_missing_genres AS
 SELECT f.path
 FROM musql.file f
 		 LEFT JOIN musql.file_tag t ON f.id = t.file_id AND t.name = 'genre'
-WHERE t.id is NULL
+WHERE t.id IS NULL
 ORDER BY f.path
