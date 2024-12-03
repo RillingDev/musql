@@ -1,0 +1,20 @@
+{
+	"ACOUSTID_ID": "AcoustidId",
+	"ARTISTS": "Artists",
+	"ASIN": "Asin",
+	"COMPILATION": "Compilation",
+	"ORIGINALYEAR": "OriginalYear",
+	"RELEASESTATUS": "ReleaseStatus",
+	"RELEASETYPE": "ReleaseType",
+	"TXXX:Acoustid Id": "AcoustidId",
+	"TXXX:ARTISTS": "Artists",
+	"TXXX:MusicBrainz Album Artist Id": "MusicBrainzAlbumArtistId",
+	"TXXX:MusicBrainz Album Id": "MusicBrainzAlbumId",
+	"TXXX:MusicBrainz Album Release Country": "MusicBrainzAlbumReleaseCountry",
+	"TXXX:MusicBrainz Album Status": "MusicBrainzReleaseStatus",
+	"TXXX:MusicBrainz Album Type": "MusicBrainzReleaseType",
+	"TXXX:MusicBrainz Artist Id": "MusicBrainzArtistId",
+	"TXXX:MusicBrainz Release Group Id": "MusicBrainzReleaseGroupId",
+	"TXXX:MusicBrainz Release Track Id": "MusicBrainzTrackId",
+	"TXXX:originalyear": "OriginalYear"
+}
