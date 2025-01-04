@@ -1,16 +1,15 @@
 use std::collections::HashMap;
-
-use lazy_static::lazy_static;
+use std::sync::LazyLock;
 use symphonia::core::meta::StandardTagKey;
+
 pub trait CanonicalTagKey {
 	fn canonical_tag_key(&self) -> &str;
 }
 
-lazy_static! {
-	static ref NONSTANDARD_TAG_MAPPING: HashMap<String, String> =
-		serde_json::from_str(include_str!("tag_key_mapping.json"))
-			.expect("Failed to parse tag mapping.");
-}
+static NONSTANDARD_TAG_MAPPING: LazyLock<HashMap<String, String>> = LazyLock::new(|| {
+	serde_json::from_str(include_str!("tag_key_mapping.json"))
+		.expect("Failed to parse tag mapping.")
+});
 impl CanonicalTagKey for str {
 	fn canonical_tag_key(&self) -> &str {
 		NONSTANDARD_TAG_MAPPING
