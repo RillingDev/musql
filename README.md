@@ -6,10 +6,6 @@
 
 Reads metadata from music files and inserts them into a relational database for further processing.
 
-### Requirements
-
--   [SQLite](https://www.sqlite.org/)
-
 ## Usage
 
 `./musql <path to directory or file>`
