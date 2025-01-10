@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS file (
     path TEXT NOT NULL PRIMARY KEY,
     -- last modified file time as seconds since unix epoch
     last_modified INTEGER NOT NULL
-);
+) STRICT;
 --
 -- Note that even for a single combination of `file_path` and `name`,
 -- multiple rows may exist in the case of multi-valued tags.
@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS file_tag (
     file_path TEXT NOT NULL REFERENCES file (path) ON DELETE CASCADE,
     name TEXT NOT NULL,
     val TEXT NOT NULL
-);
+) STRICT;
 -- Useful for most queries operating on tags as they almost always go by name, and often go by value.
 CREATE INDEX IF NOT EXISTS file_tag_name_value_ix ON file_tag (name, val);
 ----------------
