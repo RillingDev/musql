@@ -3,7 +3,7 @@ use std::sync::LazyLock;
 use symphonia::core::meta::StandardTagKey;
 
 pub trait CanonicalTagKey {
-	fn canonical_tag_key(&self) -> &str;
+	fn canonical_tag_key(&self) -> String;
 }
 
 static NONSTANDARD_TAG_MAPPING: LazyLock<HashMap<String, String>> = LazyLock::new(|| {
@@ -11,15 +11,15 @@ static NONSTANDARD_TAG_MAPPING: LazyLock<HashMap<String, String>> = LazyLock::ne
 		.expect("Failed to parse tag mapping.")
 });
 impl CanonicalTagKey for str {
-	fn canonical_tag_key(&self) -> &str {
+	fn canonical_tag_key(&self) -> String {
 		NONSTANDARD_TAG_MAPPING
 			.get(self)
-			.map_or(self, |s| s.as_str())
+			.map_or(self.to_string(), |s| s.clone())
 	}
 }
 
 impl CanonicalTagKey for StandardTagKey {
-	fn canonical_tag_key(&self) -> &str {
+	fn canonical_tag_key(&self) -> String {
 		match self {
 			StandardTagKey::AcoustidFingerprint => "AcoustidFingerprint",
 			StandardTagKey::AcoustidId => "AcoustidId",
@@ -133,5 +133,6 @@ impl CanonicalTagKey for StandardTagKey {
 			StandardTagKey::Version => "Version",
 			StandardTagKey::Writer => "Writer",
 		}
+		.to_string()
 	}
 }

@@ -48,8 +48,8 @@ fn collect_tags(tags: &[Tag]) -> Tags {
 	tags.iter()
 		.map(|tag| {
 			let key = match tag.std_key {
-				Some(std_key) => std_key.canonical_tag_key().to_string(),
-				None => tag.key.canonical_tag_key().to_string(),
+				Some(std_key) => std_key.canonical_tag_key(),
+				None => tag.key.canonical_tag_key(),
 			};
 			(key, tag.value.to_string())
 		})
