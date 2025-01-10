@@ -17,7 +17,7 @@ pub fn insert(
 	conn: &mut Connection,
 	path: &Path,
 	last_modified: &SystemTime,
-	tags: Tags,
+	tags: &Tags,
 ) -> Result<()> {
 	let path_str = path.to_str().expect("Could not convert path to string.");
 	let last_modified_int: u64 = last_modified.duration_since(UNIX_EPOCH)?.as_secs();

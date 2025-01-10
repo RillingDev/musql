@@ -65,5 +65,5 @@ fn import_file(conn: &mut Connection, path: &Path) -> Result<()> {
 		path, last_modified, tags
 	);
 
-	sql::insert(conn, path, &last_modified, tags)
+	sql::insert(conn, path, &last_modified, &tags)
 }

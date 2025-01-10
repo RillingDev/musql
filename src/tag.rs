@@ -11,11 +11,11 @@ use symphonia::core::probe::Hint;
 // Note that we don't use a map, as tags that have multiple values are treated as individual entries with the same key.
 pub type Tags = Vec<(String, String)>;
 
-// Based on Symphonias `main.rs``
+// Based on Symphonias `main.rs`.
 pub fn read_tags(path: &Path) -> Result<Tags> {
 	let src = std::fs::File::open(path)?;
 
-	// Create a probe hint using the file's extension. [Optional]
+	// Create a probe hint using the file's extension.
 	let mut hint = Hint::new();
 	if let Some(extension) = path.extension().and_then(|a| a.to_str()) {
 		hint.with_extension(extension);
