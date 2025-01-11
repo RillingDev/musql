@@ -11,8 +11,8 @@ CREATE TABLE IF NOT EXISTS file_tag (
     name TEXT NOT NULL,
     val TEXT NOT NULL
 ) STRICT;
--- Useful for most queries operating on tags as they almost always go by name, and often go by value.
-CREATE INDEX IF NOT EXISTS file_tag_name_value_ix ON file_tag (name, val);
+-- Useful for most queries operating on tags as they almost always go by name.
+CREATE INDEX IF NOT EXISTS file_tag_name_ix ON file_tag (name, file_path);
 ----------------
 -- Demo views --
 ----------------
