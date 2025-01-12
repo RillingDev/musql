@@ -8,6 +8,7 @@
 	"RELEASETYPE": "ReleaseType",
 	"TXXX:Acoustid Id": "AcoustidId",
 	"TXXX:ARTISTS": "Artists",
+	"TXXX:ASIN": "Asin",
 	"TXXX:MusicBrainz Album Artist Id": "MusicBrainzAlbumArtistId",
 	"TXXX:MusicBrainz Album Id": "MusicBrainzAlbumId",
 	"TXXX:MusicBrainz Album Release Country": "MusicBrainzAlbumReleaseCountry",
@@ -16,5 +17,6 @@
 	"TXXX:MusicBrainz Artist Id": "MusicBrainzArtistId",
 	"TXXX:MusicBrainz Release Group Id": "MusicBrainzReleaseGroupId",
 	"TXXX:MusicBrainz Release Track Id": "MusicBrainzTrackId",
+	"TXXX:Release type": "ReleaseType",
 	"TXXX:originalyear": "OriginalYear"
 }
