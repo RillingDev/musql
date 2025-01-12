@@ -5,7 +5,7 @@ use symphonia::core::meta::StandardTagKey;
 pub trait CanonicalTagKey {
 	fn canonical_tag_key(&self) -> String;
 }
-
+// TODO: can key case be ignored? maybe automate
 static NONSTANDARD_TAG_MAPPING: LazyLock<HashMap<String, String>> = LazyLock::new(|| {
 	serde_json::from_str(include_str!("tag_key_mapping.json"))
 		.expect("Failed to parse tag mapping.")

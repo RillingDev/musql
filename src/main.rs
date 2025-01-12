@@ -16,7 +16,7 @@ struct Args {
 	/// Name of the person to greet
 	#[arg(
 		required = true,
-		help = "File path to scan. If a directory is specified, all contents will be scanned recursively."
+		help = "File path to scan. If a directory is specified, all contents will be scanned recursively"
 	)]
 	base_path: PathBuf,
 
@@ -26,7 +26,7 @@ struct Args {
 		long,
 		required = false,
 		default_value = "./musql.db3",
-		help = "Path for the SQLite database that will be written to. It will be created if it does not exist."
+		help = "Path for the SQLite database that will be written to. It will be created if it does not exist"
 	)]
 	database_path: PathBuf,
 }
