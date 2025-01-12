@@ -1,4 +1,4 @@
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use anyhow::Result;
 use clap::Parser;
@@ -18,7 +18,7 @@ struct Args {
 		required = true,
 		help = "File path to scan. If a directory is specified, all contents will be scanned recursively."
 	)]
-	base_path: String,
+	base_path: PathBuf,
 
 	/// Number of times to greet
 	#[arg(
@@ -28,7 +28,7 @@ struct Args {
 		default_value = "./musql.db3",
 		help = "Path for the SQLite database that will be written to. It will be created if it does not exist."
 	)]
-	database_path: String,
+	database_path: PathBuf,
 }
 
 fn main() -> Result<()> {
@@ -39,7 +39,7 @@ fn main() -> Result<()> {
 	musql(&args.base_path, &args.database_path)
 }
 
-fn musql(base_path: &str, database_path: &str) -> Result<()> {
+fn musql(base_path: &Path, database_path: &Path) -> Result<()> {
 	info!("Initializing database.");
 	let mut conn = Connection::open(database_path)?;
 	sql::init_schema(&conn)?;
