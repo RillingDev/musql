@@ -16,6 +16,14 @@ CREATE INDEX IF NOT EXISTS file_tag_name_ix ON file_tag (name, file_path);
 ----------------
 -- Demo views --
 ----------------
+CREATE VIEW IF NOT EXISTS demo_album_artist_popularity AS
+SELECT t.val,
+    COUNT(t.val)
+FROM file_tag t
+WHERE t.name = 'AlbumArtist'
+GROUP BY t.val
+ORDER BY COUNT(t.val) DESC;
+--
 CREATE VIEW IF NOT EXISTS demo_genre_popularity AS
 SELECT t.val,
     COUNT(t.val)
@@ -46,4 +54,15 @@ FROM file f
     LEFT JOIN file_tag t ON f.path = t.file_path
     AND t.name = 'Genre'
 WHERE t.file_path IS NULL
-ORDER BY f.path
+ORDER BY f.path;
+--
+CREATE VIEW IF NOT EXISTS demo_all_tag_names AS
+SELECT t.name
+FROM file_tag t
+GROUP BY t.name
+ORDER BY t.name;
+--
+CREATE VIEW IF NOT EXISTS demo_all_artists AS
+SELECT DISTINCT(val)
+FROM file_tag
+WHERE name = 'AlbumArtist';
