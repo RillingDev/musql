@@ -13,10 +13,10 @@ mod tag_key;
 fn main() -> Result<()> {
 	let matches = Command::new("musql")
 		.arg(
-			Arg::new("file-path")
+			Arg::new("base-path")
 				.required(true)
 				.action(ArgAction::Set)
-				.help("File path to scan. If a directory is specified, all contents including other directories will be scanned."),
+				.help("File path to scan. If a directory is specified, all contents will be scanned recursively."),
 		)
 		.arg(
 			Arg::new("database-path")
@@ -32,18 +32,18 @@ fn main() -> Result<()> {
 	env_logger::builder().filter_level(LevelFilter::Info).init();
 
 	musql(
-		matches.get_one::<String>("file-path").unwrap(),
+		matches.get_one::<String>("base-path").unwrap(),
 		matches.get_one::<String>("database-path").unwrap(),
 	)
 }
 
-fn musql(file_path: &str, database_path: &str) -> Result<()> {
+fn musql(base_path: &str, database_path: &str) -> Result<()> {
 	info!("Initializing database.");
 	let mut conn = Connection::open(database_path)?;
 	sql::init_schema(&conn)?;
 
-	info!("Importing from base path {:?}.", file_path);
-	for entry in WalkDir::new(file_path) {
+	info!("Importing from base path {:?}.", base_path);
+	for entry in WalkDir::new(base_path) {
 		let dir_entry = entry?;
 		if dir_entry.file_type().is_file() {
 			info!("Reading file {:?}.", dir_entry.path());
@@ -57,13 +57,13 @@ fn musql(file_path: &str, database_path: &str) -> Result<()> {
 	Ok(())
 }
 
-fn import_file(conn: &mut Connection, path: &Path) -> Result<()> {
-	let last_modified = path.metadata()?.modified()?;
-	let tags = tag::read_tags(path)?;
+fn import_file(conn: &mut Connection, file_path: &Path) -> Result<()> {
+	let last_modified = file_path.metadata()?.modified()?;
+	let tags = tag::read_tags(file_path)?;
 	debug!(
 		"Read tags from {:?} ({:?}): {:#?}.",
-		path, last_modified, tags
+		file_path, last_modified, tags
 	);
 
-	sql::insert(conn, path, &last_modified, &tags)
+	sql::insert(conn, file_path, &last_modified, &tags)
 }

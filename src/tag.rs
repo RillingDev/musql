@@ -12,12 +12,11 @@ use symphonia::core::probe::Hint;
 pub type Tags = Vec<(String, String)>;
 
 // Based on Symphonias `main.rs`.
-pub fn read_tags(path: &Path) -> Result<Tags> {
-	let src = std::fs::File::open(path)?;
+pub fn read_tags(file_path: &Path) -> Result<Tags> {
+	let src = std::fs::File::open(file_path)?;
 
-	// Create a probe hint using the file's extension.
 	let mut hint = Hint::new();
-	if let Some(extension) = path.extension().and_then(|a| a.to_str()) {
+	if let Some(extension) = file_path.extension().and_then(|a| a.to_str()) {
 		hint.with_extension(extension);
 	}
 
