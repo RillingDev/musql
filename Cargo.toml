@@ -14,8 +14,9 @@ edition = "2021"
 log = "0.4.22"
 env_logger = "0.11.5"
 clap = { version = "4.5.20", features = ["derive"] }
+clap-verbosity-flag = "3.0.2"
 anyhow = "1.0.92"
-symphonia = { version = "0.5.4", features = ["all"] }
-rusqlite = { version = "0.32.0", features = ["bundled"] }
 walkdir = "2.5.0"
 serde_json = "1.0.133"
+symphonia = { version = "0.5.4", features = ["all"] }
+rusqlite = { version = "0.32.0", features = ["bundled"] }

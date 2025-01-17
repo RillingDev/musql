@@ -2,10 +2,9 @@ use std::path::{Path, PathBuf};
 
 use anyhow::Result;
 use clap::Parser;
-use log::{debug, info, warn, LevelFilter};
+use log::{debug, info, warn};
 use rusqlite::Connection;
 use walkdir::WalkDir;
-
 mod sql;
 mod tag;
 mod tag_key;
@@ -13,14 +12,12 @@ mod tag_key;
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 struct Args {
-	/// Name of the person to greet
 	#[arg(
 		required = true,
 		help = "File path to scan. If a directory is specified, all contents will be scanned recursively"
 	)]
 	base_path: PathBuf,
 
-	/// Number of times to greet
 	#[arg(
 		short = 'o',
 		long,
@@ -29,12 +26,19 @@ struct Args {
 		help = "Path for the SQLite database that will be written to. It will be created if it does not exist"
 	)]
 	database_path: PathBuf,
+
+	#[command(flatten)]
+	verbosity: clap_verbosity_flag::Verbosity<clap_verbosity_flag::InfoLevel>,
 }
 
 fn main() -> Result<()> {
-	env_logger::builder().filter_level(LevelFilter::Info).init();
-
 	let args = Args::parse();
+
+	env_logger::builder()
+		.filter_level(args.verbosity.into())
+		// Logs a lot of general details on info which are not needed
+		.filter_module("symphonia_core", log::LevelFilter::Warn)
+		.init();
 
 	musql(&args.base_path, &args.database_path)
 }
