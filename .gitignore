@@ -47,4 +47,4 @@ target/
 
 
 # Testing files
-local/
+.local/
