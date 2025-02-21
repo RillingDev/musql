@@ -8,7 +8,7 @@ repository = "https://github.com/RillingDev/musql"
 description = """
 Music tags to SQL conversion.
 """
-edition = "2021"
+edition = "2024"
 
 [dependencies]
 log = "0.4.22"
