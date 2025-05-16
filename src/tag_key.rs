@@ -14,7 +14,7 @@ impl CanonicalTagKey for str {
 	fn canonical_tag_key(&self) -> String {
 		NONSTANDARD_TAG_MAPPING
 			.get(self)
-			.map_or(self.to_string(), |s| s.clone())
+			.map_or(self.to_string(), std::clone::Clone::clone)
 	}
 }
 

@@ -4,7 +4,7 @@ use crate::tag_key::CanonicalTagKey;
 use anyhow::Result;
 use log::{debug, info, warn};
 use symphonia::core::formats::FormatOptions;
-use symphonia::core::io::MediaSourceStream;
+use symphonia::core::io::{MediaSourceStream, MediaSourceStreamOptions};
 use symphonia::core::meta::{MetadataOptions, Tag};
 use symphonia::core::probe::Hint;
 
@@ -20,18 +20,18 @@ pub fn read_tags(file_path: &Path) -> Result<Tags> {
 		hint.with_extension(extension);
 	}
 
-	let mss = MediaSourceStream::new(Box::new(src), Default::default());
+	let mss = MediaSourceStream::new(Box::new(src), MediaSourceStreamOptions::default());
 
-	let meta_opts: MetadataOptions = Default::default();
-	let fmt_opts: FormatOptions = Default::default();
+	let meta_opts: MetadataOptions = MetadataOptions::default();
+	let fmt_opts: FormatOptions = FormatOptions::default();
 	let mut probed = symphonia::default::get_probe().format(&hint, mss, &fmt_opts, &meta_opts)?;
 
 	if let Some(metadata_rev) = probed.format.metadata().current() {
 		debug!("Using container format metadata.");
 
 		if probed.metadata.get().as_ref().is_some() {
-			info!("tags that are part of the container format are preferentially printed.");
-			info!("not printing additional tags that were found while probing.");
+			info!("Tags that are part of the container format are preferentially printed.");
+			info!("Not printing additional tags that were found while probing.");
 		}
 		Ok(collect_tags(metadata_rev.tags()))
 	} else if let Some(metadata_rev) = probed.metadata.get().as_ref().and_then(|m| m.current()) {

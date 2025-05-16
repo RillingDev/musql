@@ -48,14 +48,18 @@ fn musql(base_path: &Path, database_path: &Path) -> Result<()> {
 	let mut conn = Connection::open(database_path)?;
 	sql::init_schema(&conn)?;
 
-	info!("Importing from base path {:?}.", base_path);
+	info!("Importing from base path {}.", base_path.display());
 	for entry in WalkDir::new(base_path) {
 		let dir_entry = entry?;
 		if dir_entry.file_type().is_file() {
-			info!("Reading file {:?}.", dir_entry.path());
+			info!("Reading file {}.", dir_entry.path().display());
 			if let Err(err) = import_file(&mut conn, dir_entry.path()) {
-				warn!("Could not process file {:?}: {}.", dir_entry.path(), err);
-			};
+				warn!(
+					"Could not process file {}: {}.",
+					dir_entry.path().display(),
+					err
+				);
+			}
 		}
 	}
 
@@ -67,8 +71,10 @@ fn import_file(conn: &mut Connection, file_path: &Path) -> Result<()> {
 	let last_modified = file_path.metadata()?.modified()?;
 	let tags = tag::read_tags(file_path)?;
 	debug!(
-		"Read tags from {:?} ({:?}): {:#?}.",
-		file_path, last_modified, tags
+		"Read tags from {} ({:?}): {:#?}.",
+		file_path.display(),
+		last_modified,
+		tags
 	);
 
 	sql::insert(conn, file_path, &last_modified, &tags)
