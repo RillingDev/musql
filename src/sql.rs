@@ -4,7 +4,7 @@ use std::{
 };
 
 use crate::tag::Tags;
-use anyhow::Result;
+use anyhow::{Context, Result};
 use rusqlite::Connection;
 
 pub fn init_schema(conn: &Connection) -> Result<()> {
@@ -21,7 +21,7 @@ pub fn insert(
 ) -> Result<()> {
 	let path_str = file_path
 		.to_str()
-		.expect("Could not convert path to string.");
+		.context("Could not convert path to string.")?;
 	let last_modified_int: u64 = last_modified.duration_since(UNIX_EPOCH)?.as_secs();
 
 	let tx = conn.transaction()?;
