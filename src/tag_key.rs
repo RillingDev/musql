@@ -14,7 +14,7 @@ impl CanonicalTagKey for str {
 	fn canonical_tag_key(&self) -> String {
 		NONSTANDARD_TAG_MAPPING
 			.get(self)
-			.map_or(self.to_string(), std::clone::Clone::clone)
+			.map_or(self.to_string(), std::string::ToString::to_string)
 	}
 }
 
@@ -134,5 +134,21 @@ impl CanonicalTagKey for StandardTagKey {
 			StandardTagKey::Writer => "Writer",
 		}
 		.to_string()
+	}
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	#[test]
+	fn for_standard_tag_key() {
+		assert_eq!(StandardTagKey::Bpm.canonical_tag_key(), "Bpm");
+	}
+
+	#[test]
+	fn for_str() {
+		assert_eq!("ASIN".canonical_tag_key(), "Asin");
+		assert_eq!("TXXX:ASIN".canonical_tag_key(), "Asin");
 	}
 }
