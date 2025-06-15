@@ -5,16 +5,20 @@ use symphonia::core::meta::StandardTagKey;
 pub trait CanonicalTagKey {
 	fn canonical_tag_key(&self) -> String;
 }
-// TODO: can key case be ignored? maybe automate
+
+// Mapping table based on MusicBrainz Picard (`__translate_freetext` in `id3.py`).
+// Some other mappings have been appended based on the tags in files written by Picard.
 static NONSTANDARD_TAG_MAPPING: LazyLock<HashMap<String, String>> = LazyLock::new(|| {
 	serde_json::from_str(include_str!("tag_key_mapping.json"))
 		.expect("Failed to parse tag mapping.")
 });
 impl CanonicalTagKey for str {
 	fn canonical_tag_key(&self) -> String {
+		// Remove any ID3 comment prefix.
+		let key = self.replace("TXXX:", "");
 		NONSTANDARD_TAG_MAPPING
-			.get(self)
-			.map_or(self.to_string(), std::string::ToString::to_string)
+			.get(&key)
+			.map_or(key, std::string::ToString::to_string)
 	}
 }
 
