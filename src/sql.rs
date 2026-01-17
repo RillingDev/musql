@@ -22,7 +22,10 @@ pub fn insert(
 	let path_str = file_path
 		.to_str()
 		.context("Could not convert path to string.")?;
-	let last_modified_int: u64 = last_modified.duration_since(UNIX_EPOCH)?.as_secs();
+	let last_modified_int: i64 = last_modified
+		.duration_since(UNIX_EPOCH)?
+		.as_secs()
+		.try_into()?;
 
 	let tx = conn.transaction()?;
 	tx.execute(
