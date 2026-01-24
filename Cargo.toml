@@ -19,4 +19,4 @@ anyhow = "1.0.92"
 walkdir = "2.5.0"
 serde_json = "1.0.133"
 symphonia = { version = "0.5.4", features = ["all"] }
-rusqlite = { version = "0.38.0", features = ["bundled"] }
+rusqlite = { version = "0.39.0", features = ["bundled"] }

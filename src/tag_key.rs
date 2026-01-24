@@ -22,6 +22,7 @@ impl CanonicalTagKey for str {
 	}
 }
 
+#[allow(clippy::too_many_lines)]
 impl CanonicalTagKey for StandardTagKey {
 	fn canonical_tag_key(&self) -> String {
 		match self {
