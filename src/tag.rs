@@ -29,7 +29,7 @@ pub fn read_tags(file_path: &Path) -> Result<Tags> {
 		MetadataOptions::default(),
 	)?;
 
-	// Based on https://github.com/pdeljanov/Symphonia/blob/6dbe658c2c64228c8b43e4f327264a83d9a1c499/symphonia-play/src/main.rs#L517
+	// Based on https://github.com/pdeljanov/Symphonia/blob/main/symphonia-play/src/main.rs
 	// We ignore older and per-track metadata
 	if let Some(metadata_rev) = probed.metadata().skip_to_latest() {
 		debug!("Using container format metadata.");
