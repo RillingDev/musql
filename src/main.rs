@@ -7,7 +7,7 @@ use rusqlite::Connection;
 use walkdir::WalkDir;
 mod sql;
 mod tag;
-mod tag_key;
+mod tag_mapping;
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
