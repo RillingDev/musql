@@ -36,7 +36,7 @@ CREATE VIEW IF NOT EXISTS demo_year_popularity AS
 SELECT t.val,
     COUNT(t.val)
 FROM file_tag t
-WHERE t.name = 'OriginalYear'
+WHERE t.name = 'OriginalReleaseYear'
 GROUP BY t.val
 ORDER BY t.val;
 --
