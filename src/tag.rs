@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use crate::tag_mapping::map_tag;
+use crate::tag_normalization::{noop_normalize, normalize};
 use anyhow::Result;
 use log::{debug, warn};
 use symphonia::core::formats::FormatOptions;
@@ -12,7 +12,7 @@ use symphonia::core::meta::MetadataOptions;
 pub type Tags = Vec<(String, String)>;
 
 // Based on Symphonias `main.rs`.
-pub fn read_tags(file_path: &Path) -> Result<Tags> {
+pub fn read_tags(file_path: &Path, skip_normalization: bool) -> Result<Tags> {
 	let src = std::fs::File::open(file_path)?;
 
 	let mut hint = Hint::new();
@@ -33,7 +33,18 @@ pub fn read_tags(file_path: &Path) -> Result<Tags> {
 	// We ignore older and per-track metadata
 	if let Some(metadata_rev) = probed.metadata().skip_to_latest() {
 		debug!("Using container format metadata.");
-		Ok(metadata_rev.media.tags.iter().map(map_tag).collect())
+		Ok(metadata_rev
+			.media
+			.tags
+			.iter()
+			.map(|tag| {
+				if skip_normalization {
+					noop_normalize(tag)
+				} else {
+					normalize(tag)
+				}
+			})
+			.collect())
 	} else {
 		warn!("No metadata found.");
 		Ok(vec![])

@@ -7,7 +7,7 @@ use rusqlite::Connection;
 use walkdir::WalkDir;
 mod sql;
 mod tag;
-mod tag_mapping;
+mod tag_normalization;
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
@@ -27,6 +27,13 @@ struct Args {
 	)]
 	database_path: PathBuf,
 
+	#[arg(
+		long,
+		required = false,
+		help = "If the normalization of tags should be skipped"
+	)]
+	skip_tag_normalization: bool,
+
 	#[command(flatten)]
 	verbosity: clap_verbosity_flag::Verbosity<clap_verbosity_flag::InfoLevel>,
 }
@@ -40,10 +47,14 @@ fn main() -> Result<()> {
 		.filter_module("symphonia_core", log::LevelFilter::Warn)
 		.init();
 
-	musql(&args.base_path, &args.database_path)
+	musql(
+		&args.base_path,
+		&args.database_path,
+		args.skip_tag_normalization,
+	)
 }
 
-fn musql(base_path: &Path, database_path: &Path) -> Result<()> {
+fn musql(base_path: &Path, database_path: &Path, skip_tag_normalization: bool) -> Result<()> {
 	info!("Initializing database.");
 	let mut conn = Connection::open(database_path)?;
 	sql::init_schema(&conn)?;
@@ -53,7 +64,7 @@ fn musql(base_path: &Path, database_path: &Path) -> Result<()> {
 		let dir_entry = entry?;
 		if dir_entry.file_type().is_file() {
 			info!("Reading file {}.", dir_entry.path().display());
-			if let Err(err) = import_file(&mut conn, dir_entry.path()) {
+			if let Err(err) = import_file(&mut conn, dir_entry.path(), skip_tag_normalization) {
 				warn!(
 					"Could not process file {}: {}.",
 					dir_entry.path().display(),
@@ -67,9 +78,13 @@ fn musql(base_path: &Path, database_path: &Path) -> Result<()> {
 	Ok(())
 }
 
-fn import_file(conn: &mut Connection, file_path: &Path) -> Result<()> {
+fn import_file(
+	conn: &mut Connection,
+	file_path: &Path,
+	skip_tag_normalization: bool,
+) -> Result<()> {
 	let last_modified = file_path.metadata()?.modified()?;
-	let tags = tag::read_tags(file_path)?;
+	let tags = tag::read_tags(file_path, skip_tag_normalization)?;
 	debug!(
 		"Read tags from {} ({:?}): {:#?}.",
 		file_path.display(),

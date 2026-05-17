@@ -4,19 +4,24 @@ use symphonia::core::meta::{RawTag, StandardTag, Tag};
 
 // Mapping table based on MusicBrainz Picard (`__translate_freetext` in `id3.py`).
 // Some other mappings have been appended based on the tags in files written by Picard.
-static NONSTANDARD_TAG_MAPPING: LazyLock<HashMap<String, String>> = LazyLock::new(|| {
-	serde_json::from_str(include_str!("tag_mapping.json")).expect("Failed to parse tag mapping.")
+static NONSTANDARD_TAG_KEY_MAPPING: LazyLock<HashMap<String, String>> = LazyLock::new(|| {
+	serde_json::from_str(include_str!("tag_key_mapping.json"))
+		.expect("Failed to parse tag key mapping.")
 });
 
-pub fn map_tag(tag: &Tag) -> (String, String) {
+pub fn noop_normalize(tag: &Tag) -> (String, String) {
+	(tag.raw.key.clone(), tag.raw.value.to_string())
+}
+
+pub fn normalize(tag: &Tag) -> (String, String) {
 	if let Some(std_tag) = &tag.std {
-		map_std_tag(std_tag)
+		normalize_std_tag(std_tag)
 	} else {
-		map_raw_rag(&tag.raw)
+		normalize_raw_rag(&tag.raw)
 	}
 }
 
-fn map_raw_rag(raw_tag: &RawTag) -> (String, String) {
+fn normalize_raw_rag(raw_tag: &RawTag) -> (String, String) {
 	let mut key = raw_tag.key.clone();
 
 	// Nonstandard ID3 Tags have the tag name stored in the sub_fields, try to extract them
@@ -29,14 +34,14 @@ fn map_raw_rag(raw_tag: &RawTag) -> (String, String) {
 		key = description_field.value.to_string();
 	}
 
-	let mapped_key = NONSTANDARD_TAG_MAPPING
+	let mapped_key = NONSTANDARD_TAG_KEY_MAPPING
 		.get(&key)
 		.map_or(key, std::string::ToString::to_string);
 	(mapped_key, raw_tag.value.to_string())
 }
 
 #[allow(clippy::too_many_lines)]
-fn map_std_tag(std_tag: &StandardTag) -> (String, String) {
+fn normalize_std_tag(std_tag: &StandardTag) -> (String, String) {
 	let x = match std_tag {
 		StandardTag::AccurateRipCount(val) => ("AccurateRipCount", val.to_string()),
 		StandardTag::AccurateRipCountAllOffsets(val) => {
@@ -288,12 +293,15 @@ mod tests {
 	#[test]
 	fn standard_tag() {
 		let tag = Tag::new_std(RawTag::new("Bpm", "120"), StandardTag::Bpm(120));
-		assert_eq!(map_tag(&tag), ("Bpm".to_string(), "120".to_string()));
+		assert_eq!(normalize(&tag), ("Bpm".to_string(), "120".to_string()));
 	}
 
 	#[test]
 	fn other_tag() {
 		let tag = Tag::new(RawTag::new("ASIN", "SomeAsin"));
-		assert_eq!(map_tag(&tag), ("Asin".to_string(), "SomeAsin".to_string()));
+		assert_eq!(
+			normalize(&tag),
+			("Asin".to_string(), "SomeAsin".to_string())
+		);
 	}
 }
