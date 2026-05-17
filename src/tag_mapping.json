@@ -1,6 +1,11 @@
 {
+	"MusicBrainz Album Type": "MusicBrainzReleaseType",
+	"MusicBrainz Artist Id": "MusicBrainzArtistId",
+
 	"ASIN": "Asin",
 	"ARTISTS": "Artists",
 	"BPM": "Bpm",
-	"UFID": "Ufid"
+	"UFID": "Ufid",
+
+	"originalyear": "OriginalReleaseYear"
 }

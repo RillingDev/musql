@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use std::sync::LazyLock;
-use symphonia::core::meta::{StandardTag, Tag};
+use symphonia::core::meta::{RawTag, StandardTag, Tag};
 
 // Mapping table based on MusicBrainz Picard (`__translate_freetext` in `id3.py`).
 // Some other mappings have been appended based on the tags in files written by Picard.
@@ -12,14 +12,27 @@ pub fn map_tag(tag: &Tag) -> (String, String) {
 	if let Some(std_tag) = &tag.std {
 		map_std_tag(std_tag)
 	} else {
-		// TODO: some MP3 tags come in with just the key = "TXXX". Ignore them?
-		// Remove any ID3 comment prefix.
-		let key = tag.raw.key.replace("TXXX:", "");
-		let mapped_key = NONSTANDARD_TAG_MAPPING
-			.get(&key)
-			.map_or(key, std::string::ToString::to_string);
-		(mapped_key, tag.raw.value.to_string())
+		map_raw_rag(&tag.raw)
 	}
+}
+
+fn map_raw_rag(raw_tag: &RawTag) -> (String, String) {
+	let mut key = raw_tag.key.clone();
+
+	// Nonstandard ID3 Tags have the tag name stored in the sub_fields, try to extract them
+	if key == "TXXX"
+		&& let Some(sub_fields) = &raw_tag.sub_fields
+		&& let Some(description_field) = sub_fields
+			.iter()
+			.find(|sub_field| sub_field.field == "DESCRIPTION")
+	{
+		key = description_field.value.to_string();
+	}
+
+	let mapped_key = NONSTANDARD_TAG_MAPPING
+		.get(&key)
+		.map_or(key, std::string::ToString::to_string);
+	(mapped_key, raw_tag.value.to_string())
 }
 
 #[allow(clippy::too_many_lines)]
